@@ -55,10 +55,7 @@
       },
       "licenses" : {
         "client" : false,
-        "product" : {
-          "referrer": "WP-Property",
-          "product_id": "wp-property/wp-property-terms"
-        }
+        "product" : false
       }
     }
   }
