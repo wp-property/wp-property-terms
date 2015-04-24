@@ -52,6 +52,10 @@ namespace UsabilityDynamics\WPP {
         /** Prepare taxonomy's arguments before registering taxonomy. */
         add_filter( 'wpp::register_taxonomy', array( $this, 'prepare_taxonomy' ), 99, 2 );
 
+        /** Add Meta Box to manage taxonomies on Edit Property page. */
+        add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
+        add_filter( 'wpp::meta_boxes::icons', array( $this, 'add_meta_box_icon' ), 99 );
+
       }
 
       /**
@@ -77,6 +81,68 @@ namespace UsabilityDynamics\WPP {
 
           $this->settings->commit();
         }
+      }
+
+      /**
+       * @param $icons
+       * @return mixed
+       */
+      public function add_meta_box_icon( $icons ) {
+        $icons['_terms'] = 'dashicons-search';
+        return $icons;
+      }
+
+      /**
+       * Register Meta Box for taxonomies on Edit Property Page
+       *
+       * @param $meta_boxes
+       * @return array
+       */
+      public function add_meta_box( $meta_boxes ) {
+
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+
+        $fields = array();
+        foreach($taxonomies as $k => $d) {
+          array_push( $fields, array(
+            'name' => $d['label'],
+            'id' => $k,
+            'type' => 'taxonomy',
+            'multiple' => true,
+            'options' => array(
+              'taxonomy' => $k,
+              'type' => 'select_advanced',
+              'args' => array(),
+            )
+          ) );
+        }
+
+        $taxonomy_box = array(
+          'id' => '_terms',
+          'title' => __( 'Taxonomies', ud_get_wpp_terms()->domain ),
+          'pages' => array( 'property' ),
+          'context' => 'advanced',
+          'priority' => 'low',
+          'fields' => $fields,
+        );
+
+        $_meta_boxes = array();
+        $added = false;
+        foreach( $meta_boxes as $meta_box ) {
+          /** We want to add Taxonomies under General Meta Box */
+          array_push($_meta_boxes,  $meta_box );
+          if( $meta_box['id'] == '_general' ) {
+            array_push($_meta_boxes,  $taxonomy_box );
+            $added = true;
+          }
+        }
+
+        /* In case we did not add meta box, we do it at last. */
+        if(!$added) {
+          array_push($_meta_boxes,  $taxonomy_box );
+        }
+
+        return $_meta_boxes;
       }
 
       /**
