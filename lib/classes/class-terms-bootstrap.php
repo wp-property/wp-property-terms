@@ -55,7 +55,67 @@ namespace UsabilityDynamics\WPP {
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
         add_filter( 'wpp::meta_boxes::icons', array( $this, 'add_meta_box_icon' ), 99 );
+        
+        /** Search hooks ( get_properties, property_overview shortcode, etc ) */
+        add_filter( 'get_queryable_keys', array( $this, 'get_queryable_keys' ) );
+        add_filter( 'wpp::get_properties::custom_case', array( $this, 'custom_search_case' ), 99, 2 );
+        add_filter( 'wpp::get_properties::custom_key', array( $this, 'custom_search_query' ), 99, 3 );
 
+      }
+      
+      /**
+       * Determine if search key belongs taxonomy.
+       * 
+       * @action wpp::get_properties::custom_case
+       * @see WPP_F::get_properties()
+       * @param bool $bool
+       * @param string $key
+       * @return bool
+       */
+      public function custom_search_case( $bool, $key ) {
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        if( !empty( $taxonomies ) && is_array( $taxonomies ) && in_array( $key, array_keys($taxonomies) ) ) {
+          return true;
+        }
+        return $bool;
+      }
+      
+      /**
+       * Do search for taxonomies.
+       * 
+       * @param array $matching_ids
+       * @param string $key
+       * @param string $criteria
+       * @return array
+       */
+      public function custom_search_query( $matching_ids, $key, $criteria ) {
+        // Be sure that queried key belongs to taxonomy
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        if( empty( $taxonomies ) || !is_array( $taxonomies ) || !in_array( $key, array_keys($taxonomies) ) ) {
+          return $matching_ids;
+        }
+        
+        echo "<pre>";
+        var_dump($matching_ids );
+        echo "</pre>";
+        die();
+        
+        return $matching_ids;
+      }
+      
+      /**
+       * Adds taxonomies keys to queryable keys list.
+       * 
+       * @see WPP_F::get_queryable_keys()
+       * @param array $keys
+       * @return array
+       */
+      public function get_queryable_keys( $keys ) {
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        if( !empty( $taxonomies ) && is_array( $taxonomies ) && is_array( $keys ) ) {
+          $keys = array_unique( array_merge( $keys, array_keys($taxonomies) ) );
+        }
+        return $keys;
       }
 
       /**
