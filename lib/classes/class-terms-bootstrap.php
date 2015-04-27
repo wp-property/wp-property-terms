@@ -94,11 +94,63 @@ namespace UsabilityDynamics\WPP {
         if( empty( $taxonomies ) || !is_array( $taxonomies ) || !in_array( $key, array_keys($taxonomies) ) ) {
           return $matching_ids;
         }
-        
-        echo "<pre>";
-        var_dump($matching_ids );
-        echo "</pre>";
-        die();
+
+        if( !is_array( $criteria ) ) {
+          $criteria = explode( ',', trim( $criteria ) );
+        }
+
+        $is_numeric = true;
+        foreach($criteria as $i => $v) {
+          $criteria[$i] = trim($v);
+          if( !is_numeric($criteria[$i]) ) {
+            $is_numeric = false;
+          }
+        }
+
+        if($is_numeric) {
+          $tax_query = array(
+            array(
+              'taxonomy' => $key,
+              'field'    => 'term_id',
+              'terms'    => $criteria,
+            ),
+          );
+        } else {
+          $tax_query = array(
+            'relation' => 'OR',
+            array(
+              'taxonomy' => $key,
+              'field'    => 'name',
+              'terms'    => $criteria,
+            ),
+            array(
+              'taxonomy' => $key,
+              'field'    => 'slug',
+              'terms'    => $criteria,
+            ),
+          );
+        }
+
+        $args = array(
+          'post_type' => 'property',
+          'post_status' => 'publish',
+          'posts_per_page' => '-1',
+          'tax_query' => $tax_query,
+        );
+
+        if( !empty( $matching_ids ) && is_array( $matching_ids ) ) {
+          $args[ 'post__in' ] = $matching_ids;
+        }
+
+        $wp_query = new \WP_Query( $args );
+        $matching_ids = array();
+        if( $wp_query->have_posts() ) {
+          while ( $wp_query->have_posts() ) {
+            $wp_query->the_post();
+            array_push( $matching_ids, get_the_ID() );
+          }
+          wp_reset_postdata();
+        }
         
         return $matching_ids;
       }
