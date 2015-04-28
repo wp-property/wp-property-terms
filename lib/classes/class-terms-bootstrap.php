@@ -55,12 +55,35 @@ namespace UsabilityDynamics\WPP {
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
         add_filter( 'wpp::meta_boxes::icons', array( $this, 'add_meta_box_icon' ), 99 );
-        
+
         /** Search hooks ( get_properties, property_overview shortcode, etc ) */
         add_filter( 'get_queryable_keys', array( $this, 'get_queryable_keys' ) );
         add_filter( 'wpp::get_properties::custom_case', array( $this, 'custom_search_case' ), 99, 2 );
         add_filter( 'wpp::get_properties::custom_key', array( $this, 'custom_search_query' ), 99, 3 );
 
+        /** on Clone Property action */
+        add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
+      }
+
+      /**
+       * On property cloning we also clone terms.
+       *
+       * @see UsabilityDynamics\WPP\Ajax::action_wpp_clone_property()
+       * @action wpp::clone_property::action
+       * @param array $old_property
+       * @param int $new_post_id
+       */
+      public function clone_property_action( $old_property, $new_post_id ) {
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+
+        if( !empty($taxonomies) && is_array($taxonomies) ) {
+          foreach( $taxonomies as $k => $v ) {
+            $terms = wp_get_object_terms( $old_property['ID'], $k, array("fields" => "ids") );
+            if( !empty( $terms ) ) {
+              wp_set_object_terms( $new_post_id, $terms, $k );
+            }
+          }
+        }
       }
       
       /**
