@@ -48,13 +48,13 @@
             <label><input type="checkbox" name="wpp_terms[<?php echo $slug; ?>][public]" <?php checked( $data['public'], true ); ?> value="true"/> <?php _e( 'Public', ud_get_wpp_terms()->domain ); ?></label>
           </li>
           <li>
-            <label><input type="checkbox" name="wpp_terms[<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show UI', ud_get_wpp_terms()->domain ); ?></label>
-          </li>
-          <li>
             <label><input type="checkbox" name="wpp_terms[<?php echo $slug; ?>][show_in_nav_menus]" <?php checked( $data['show_in_nav_menus'], true ); ?> value="true"/> <?php _e( 'Show in Nav Menus', ud_get_wpp_terms()->domain ); ?></label>
           </li>
           <li>
             <label><input type="checkbox" name="wpp_terms[<?php echo $slug; ?>][show_tagcloud]" <?php checked( $data['show_tagcloud'], true ); ?> value="true"/> <?php _e( 'Show in Tag Cloud', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+          <li>
+            <label><input type="checkbox" name="wpp_terms[<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show native WordPress metabox.', ud_get_wpp_terms()->domain ); ?></label>
           </li>
         </ul>
       </td>
