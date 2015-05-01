@@ -79,9 +79,20 @@ namespace UsabilityDynamics\WPP {
         if( !is_array( $fields ) ) {
           $fields = array();
         }
+
+        /* Get all existing fields names */
+        $defined = array();
+        foreach( $fields as $field ) {
+          array_push( $defined, $field['id'] );
+        }
+
         $taxonomies = $this->get( 'config.taxonomies', array() );
         if( !empty($taxonomies) && is_array($taxonomies) ) {
           foreach( $taxonomies as $k => $v ) {
+            /* Ignore taxonomy if field with the same name already exists */
+            if( in_array( $k, $defined ) ) {
+              continue;
+            }
             array_push( $fields, array(
               'id' => $k,
               'name' => $v['label'],
