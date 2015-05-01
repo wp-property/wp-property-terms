@@ -60,9 +60,45 @@ namespace UsabilityDynamics\WPP {
         add_filter( 'get_queryable_keys', array( $this, 'get_queryable_keys' ) );
         add_filter( 'wpp::get_properties::custom_case', array( $this, 'custom_search_case' ), 99, 2 );
         add_filter( 'wpp::get_properties::custom_key', array( $this, 'custom_search_query' ), 99, 3 );
+        /** Add Search fields on 'All Properties' page ( admin panel ) */
+        add_filter( 'wpp::overview::filter::fields', array( $this, 'get_filter_fields' ) );
 
         /** on Clone Property action */
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
+      }
+
+      /**
+       * Apply filter fields for available taxonomies.
+       *
+       * @see UsabilityDynamics\WPP\Admin_Overview::get_filter_fields()
+       * @action wpp::overview::filter::fields
+       * @param array $fields
+       * @return array
+       */
+      public function get_filter_fields( $fields ) {
+        if( !is_array( $fields ) ) {
+          $fields = array();
+        }
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        if( !empty($taxonomies) && is_array($taxonomies) ) {
+          foreach( $taxonomies as $k => $v ) {
+            array_push( $fields, array(
+              'id' => $k,
+              'name' => $v['label'],
+              'type' => 'taxonomy',
+              'multiple' => true,
+              'options' => array(
+                'taxonomy' => $k,
+                'type' => 'select_advanced',
+                'args' => array(),
+              ),
+              'map' => array(
+                'class' => 'taxonomy',
+              ),
+            ) );
+          }
+        }
+        return $fields;
       }
 
       /**
