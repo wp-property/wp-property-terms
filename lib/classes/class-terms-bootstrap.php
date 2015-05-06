@@ -30,9 +30,12 @@ namespace UsabilityDynamics\WPP {
           return;
         }
 
-        /** Add Terms UI on Settings Developer Tab. */
+        /**
+         * Add Terms UI on Settings page.
+         */
         if( current_user_can( 'manage_wpp_categories' ) ) {
 
+          /** Add Settings on Developer Tab */
           add_filter( 'wpp::settings_developer::tabs', function( $tabs ){
             $tabs['terms'] = array(
               'label' => __( 'Taxonomies', $this->domain ),
@@ -40,6 +43,16 @@ namespace UsabilityDynamics\WPP {
               'order' => 25
             );
             return $tabs;
+          } );
+
+          /** Add Hidden Taxonomies on Types Tab */
+          add_action( 'wpp::types::hidden_attributes', function( $property_slug ){
+            include $this->path( 'static/views/admin/settings-hidden-terms.php', 'dir' );
+          } );
+
+          /** Add Inherited Taxonomies on Types Tab */
+          add_action( 'wpp::types::inherited_attributes', function( $property_slug ){
+            include $this->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
           } );
 
           add_action( 'wpp::save_settings', array( $this, 'save_terms' ) );
@@ -282,21 +295,61 @@ namespace UsabilityDynamics\WPP {
        */
       public function add_meta_box( $meta_boxes ) {
 
+        $post_id = false;
+        $type = false;
+        if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
+          $post_id = $_REQUEST['post'];
+          $type = get_post_meta( $post_id, 'property_type', true );
+        }
+
         $taxonomies = $this->get( 'config.taxonomies', array() );
+
+        if( $type ) {
+          $hidden = ud_get_wp_property( 'hidden_terms.' . $type, array() );
+          $inherited = ud_get_wp_property( 'terms_inheritance.' . $type, array() );
+        }
 
         $fields = array();
         foreach($taxonomies as $k => $d) {
-          array_push( $fields, array(
-            'name' => $d['label'],
-            'id' => $k,
-            'type' => 'taxonomy',
-            'multiple' => true,
-            'options' => array(
-              'taxonomy' => $k,
-              'type' => 'select_advanced',
-              'args' => array(),
-            )
-          ) );
+
+          $field = array();
+          switch( true ) {
+            // Hidden
+            case ( in_array( $k, $hidden ) ):
+              // Ignore field, since it's hidden.
+              break;
+            case ( in_array( $k, $inherited ) ):
+              $field = array(
+                'name' => $d['label'],
+                'id' => $k,
+                'type' => 'wpp_taxonomy_inherited',
+                'options' => array(
+                  'taxonomy' => $k,
+                  'type' => 'readonly',
+                  'args' => array(),
+                )
+              );
+              break;
+
+            default:
+              $field = array(
+                'name' => $d['label'],
+                'id' => $k,
+                'type' => 'taxonomy',
+                'multiple' => true,
+                'options' => array(
+                  'taxonomy' => $k,
+                  'type' => 'select_advanced',
+                  'args' => array(),
+              ) );
+              break;
+          }
+
+          if( !empty($field) ) {
+            array_push( $fields, $field);
+          }
+
+
         }
 
         $taxonomy_box = array(

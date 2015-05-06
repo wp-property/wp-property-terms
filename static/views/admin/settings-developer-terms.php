@@ -1,7 +1,7 @@
 <?php
 /**
  * Settings 'Developer' Tab
- * Section 'Advanced'
+ * Section 'Taxonomies'
  */
 
 ?>
