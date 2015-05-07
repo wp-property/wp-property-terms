@@ -47,13 +47,17 @@ module.exports = function build( grunt ) {
           yuicompress: true,
           relativeUrls: true
         },
-        files: {}
+        files: {
+          'static/styles/fields/wpp-taxonomy-inherited.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
+        }
       },
       development: {
         options: {
           relativeUrls: true
         },
-        files: {}
+        files: {
+          'static/styles/fields/wpp-taxonomy-inherited.dev.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
+        }
       }
     },
 
@@ -64,7 +68,8 @@ module.exports = function build( grunt ) {
       },
       less: {
         files: [
-          'static/styles/src/*.*'
+          'static/styles/src/*.*',
+          'static/styles/src/fields/*.*'
         ],
         tasks: [ 'less' ]
       },

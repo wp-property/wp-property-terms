@@ -55,7 +55,7 @@ namespace UsabilityDynamics\WPP {
             include $this->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
           } );
 
-          add_action( 'wpp::save_settings', array( $this, 'save_terms' ) );
+          add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
 
         }
 
@@ -68,6 +68,8 @@ namespace UsabilityDynamics\WPP {
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
         add_filter( 'wpp::meta_boxes::icons', array( $this, 'add_meta_box_icon' ), 99 );
+        /** Handle inherited taxonomies on property saving. */
+        add_action( 'save_property', array( $this, 'save_property' ), 11 );
 
         /** Search hooks ( get_properties, property_overview shortcode, etc ) */
         add_filter( 'get_queryable_keys', array( $this, 'get_queryable_keys' ) );
@@ -78,12 +80,78 @@ namespace UsabilityDynamics\WPP {
 
         /** on Clone Property action */
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
+
+
+        add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+      }
+
+      /**
+       * Remove Taxonomy Meta Boxes if they added
+       * for hidden and inherited taxonomies to prevent issues.
+       *
+       */
+      public function maybe_remove_native_meta_boxes() {
+
+        if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
+          $type = get_post_meta( $_REQUEST['post'], 'property_type', true );
+        }
+
+        if( !isset( $type ) ) {
+          return;
+        }
+
+        /** Remove meta boxes for all inherited taxonomies */
+        $inherited = $this->get( 'config.inherited.' . $type, array() );
+        if( !empty( $inherited ) && is_array( $inherited ) ) {
+          foreach( $inherited as $taxonomy ) {
+            remove_meta_box( 'tagsdiv-' . $taxonomy, 'property', 'side' );
+          }
+        }
+
+        /** Remove meta boxes for all hidden taxonomies */
+        $hidden = $this->get( 'config.hidden.' . $type, array() );
+        if( !empty( $hidden ) && is_array( $hidden ) ) {
+          foreach( $hidden as $taxonomy ) {
+            remove_meta_box( 'tagsdiv-' . $taxonomy, 'property', 'side' );
+          }
+        }
+
+      }
+
+      /**
+       * Handle inherited taxonomies on property saving.
+       *
+       * @see \UsabilityDynamics\WPP\WPP_Core::save_property
+       * @action save_property
+       * @param in $post_id
+       */
+      public function save_property( $post_id ) {
+
+        //* Check if property has children */
+        $children = get_children( "post_parent=$post_id&post_type=property" );
+        //* Write any data to children properties that are supposed to inherit things */
+        if( count( $children ) > 0 ) {
+          //* Go through all children */
+          foreach( $children as $id => $data ) {
+            //* Determine child property_type */
+            $type = get_post_meta( $id, 'property_type', true );
+            //* Check if child's property type has inheritence rules, and if meta_key exists in inheritance array */
+            $inherited = $this->get( 'config.inherited.' . $type, array() );
+            if( !empty( $inherited ) && is_array( $inherited ) ) {
+              foreach( $inherited as $taxonomy ) {
+                $terms = wp_get_object_terms( $post_id, $taxonomy, array("fields" => "ids") );
+                wp_set_object_terms( $id, $terms, $taxonomy );
+              }
+            }
+          }
+        }
+
       }
 
       /**
        * Apply filter fields for available taxonomies.
        *
-       * @see UsabilityDynamics\WPP\Admin_Overview::get_filter_fields()
+       * @see \UsabilityDynamics\WPP\Admin_Overview::get_filter_fields()
        * @action wpp::overview::filter::fields
        * @param array $fields
        * @return array
@@ -257,22 +325,31 @@ namespace UsabilityDynamics\WPP {
        * Save custom Taxonomies
        *
        */
-      public function save_terms( $data ) {
-        if( !empty( $data[ 'wpp_terms' ] ) && is_array( $data[ 'wpp_terms' ] ) ) {
-          $taxonomies = array();
+      public function save_settings( $data ) {
+        if( !empty( $data[ 'wpp_terms' ] ) ) {
 
-          foreach( $data[ 'wpp_terms' ] as $taxonomy => $v ) {
-
-            /* Ignore missed Taxonomy */
-            if( empty( $v[ 'label' ] ) && count( $data[ 'wpp_terms' ] ) == 1 ) {
-              break;
+          /** Take care about available taxonomies */
+          if( !empty($data[ 'wpp_terms' ][ 'taxonomies' ]) && is_array( $data[ 'wpp_terms' ][ 'taxonomies' ] ) ) {
+            $taxonomies = array();
+            foreach( $data[ 'wpp_terms' ][ 'taxonomies' ] as $taxonomy => $v ) {
+              /* Ignore missed Taxonomy */
+              if( empty( $v[ 'label' ] ) && count( $data[ 'wpp_terms' ] ) == 1 ) {
+                break;
+              }
+              $taxonomies[ $taxonomy ] = $this->prepare_taxonomy( $v, $taxonomy );
             }
-
-            $taxonomies[ $taxonomy ] = $this->prepare_taxonomy( $v, $taxonomy );
-
+            $this->set( 'config.taxonomies', $taxonomies );
           }
 
-          $this->set( 'config.taxonomies', $taxonomies );
+          /** Take care about hidden taxonomies */
+          if( isset($data[ 'wpp_terms' ][ 'hidden' ]) ) {
+            $this->set( 'config.hidden', $data[ 'wpp_terms' ][ 'hidden' ] );
+          }
+
+          /** Take care about inherited taxonomies */
+          if( isset($data[ 'wpp_terms' ][ 'inherited' ]) ) {
+            $this->set( 'config.inherited', $data[ 'wpp_terms' ][ 'inherited' ] );
+          }
 
           $this->settings->commit();
         }
@@ -295,7 +372,6 @@ namespace UsabilityDynamics\WPP {
        */
       public function add_meta_box( $meta_boxes ) {
 
-        $post_id = false;
         $type = false;
         if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
           $post_id = $_REQUEST['post'];
@@ -305,8 +381,8 @@ namespace UsabilityDynamics\WPP {
         $taxonomies = $this->get( 'config.taxonomies', array() );
 
         if( $type ) {
-          $hidden = ud_get_wp_property( 'hidden_terms.' . $type, array() );
-          $inherited = ud_get_wp_property( 'terms_inheritance.' . $type, array() );
+          $hidden = $this->get( 'config.hidden.' . $type, array() );
+          $inherited = $this->get( 'config.inherited.' . $type, array() );
         }
 
         $fields = array();
@@ -323,6 +399,7 @@ namespace UsabilityDynamics\WPP {
                 'name' => $d['label'],
                 'id' => $k,
                 'type' => 'wpp_taxonomy_inherited',
+                'desc' => sprintf( __( 'The terms are inherited from Parent %s.', $this->get('domain') ), \WPP_F::property_label() ),
                 'options' => array(
                   'taxonomy' => $k,
                   'type' => 'readonly',
@@ -332,6 +409,10 @@ namespace UsabilityDynamics\WPP {
               break;
 
             default:
+              /** Do no add taxonomy field if native meta box is being used for it. */
+              if( $d[ 'show_ui' ] ) {
+                break;
+              }
               $field = array(
                 'name' => $d['label'],
                 'id' => $k,
