@@ -380,6 +380,8 @@ namespace UsabilityDynamics\WPP {
 
         $taxonomies = $this->get( 'config.taxonomies', array() );
 
+        $hidden = array();
+        $inherited = array();
         if( $type ) {
           $hidden = $this->get( 'config.hidden.' . $type, array() );
           $inherited = $this->get( 'config.inherited.' . $type, array() );
