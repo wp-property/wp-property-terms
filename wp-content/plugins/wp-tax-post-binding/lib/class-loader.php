@@ -56,6 +56,32 @@ namespace UsabilityDynamics\CFTPB {
           $configs = array();
         }
 
+        $existed_taxonomies = array();
+        foreach( $configs as $config ) {
+          $tax_name = false;
+          if (empty($config['taxonomy'])) {
+            continue;
+          }
+          if (is_string($config['taxonomy'])) {
+            $tax_name = $config['taxonomy'];
+          }
+          else if (is_array($config['taxonomy'])) {
+            $args = count($config['taxonomy']);
+            if (!$args == 3) {
+              continue;
+            }
+            else if (!is_string($config['taxonomy'][0])) {
+              continue;
+            }
+            if (taxonomy_exists($config['taxonomy'][0])) {
+              $tax_name = $config['taxonomy'][0];
+            }
+          }
+          if( !empty($tax_name) ) {
+            array_push( $existed_taxonomies, $tax_name );
+          }
+        }
+
         $extended_taxonomies = array();
         foreach( $this->post_types as $post_type  ) {
           $taxonomies = get_object_taxonomies( $post_type );
@@ -66,25 +92,27 @@ namespace UsabilityDynamics\CFTPB {
                 continue;
               }
               /* Determine if taxonomy already added to the list. */
-              if( isset( $extended_taxonomies[ $taxonomy ] ) ) {
+              if( in_array( $taxonomy, $extended_taxonomies ) ) {
                 continue;
               }
-              $_taxonomy = get_taxonomy( $taxonomy );
-              if( empty( $_taxonomy ) ) {
+              /* Determine if taxonomy already added to configuration. */
+              if( in_array( $taxonomy, $existed_taxonomies ) ) {
                 continue;
               }
-              $extended_taxonomies[ $taxonomy ] = $_taxonomy->labels->name;
+              $extended_taxonomies[] = $taxonomy;
             }
           }
         }
 
-        foreach( $extended_taxonomies as $taxonomy => $label ){
+        foreach( $extended_taxonomies as $taxonomy ){
+          $_taxonomy = get_taxonomy( $taxonomy );
           array_push( $configs, array(
             'taxonomy' => $taxonomy,
             'post_type' => array(
-              '_'. $taxonomy,
+              substr( $taxonomy, 0, 20 ),
               array(
-                'label' => $label,
+                'label' => $_taxonomy->labels->name,
+                'hierarchical' => $_taxonomy->hierarchical,
                 'public' => true,
                 'publicly_queryable' => true,
                 'show_ui' => false,

@@ -199,16 +199,16 @@
     },
     {
         "name": "usabilitydynamics/wp-tax-post-binding",
-        "version": "2.0.2",
-        "version_normalized": "2.0.2.0",
+        "version": "2.0.3",
+        "version_normalized": "2.0.3.0",
         "source": {
             "type": "git",
             "url": "git@github.com:UsabilityDynamics/wp-tax-post-binding",
-            "reference": "2.0.2"
+            "reference": "2.0.3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/UsabilityDynamics/wp-tax-post-binding/archive/2.0.2.zip",
+            "url": "https://github.com/UsabilityDynamics/wp-tax-post-binding/archive/2.0.3.zip",
             "reference": null,
             "shasum": null
         },
