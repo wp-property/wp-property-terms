@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'RWMB_Wpp_Taxonomy_Inherited_Field' => $baseDir . '/lib/classes/fields/class-wpp-taxonomy-inherited.php',
+    'UsabilityDynamics\\CFTPB\\Loader' => $baseDir . '/wp-content/plugins/wp-tax-post-binding/lib/class-loader.php',
     'UsabilityDynamics\\Job' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-job.php',
     'UsabilityDynamics\\Loader' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-loader.php',
     'UsabilityDynamics\\Structure' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-structure.php',

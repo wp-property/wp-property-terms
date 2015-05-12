@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * Loader
+ *
+ * @since 1.0.0
+ */
+
+namespace UsabilityDynamics\CFTPB {
+
+  if (!class_exists('UsabilityDynamics\CFTPB\Loader')) {
+
+    final class Loader {
+
+      /**
+       * The list of post types which have extended taxonomies
+       *
+       * @var array
+       */
+      var $post_types = array();
+
+      /**
+       * The list of taxonomies which must not be extended.
+       *
+       * @var array
+       */
+      var $exclude = array();
+
+      /**
+       *
+       */
+      public function __construct( $args = array() ) {
+
+        if( !empty( $args['post_types'] ) && is_array( $args['post_types'] ) ) {
+          $this->post_types = $args['post_types'];
+        }
+
+        if( !empty( $args['exclude'] ) && is_array( $args['exclude'] ) ) {
+          $this->exclude = $args['exclude'];
+        }
+
+        if( !defined( 'CF_TAX_POST_BINDING' ) && ( current_filter( 'plugins_loaded' ) || did_action( 'plugins_loaded' ) ) ) {
+          include_once( dirname( dirname( __FILE__ ) ) . '/cf-tax-post-binding.php' );
+        }
+
+        add_filter( 'cftpb_configs', array( $this, 'setup_extended_taxonomies' ) );
+
+      }
+
+      /**
+       * Add taxonomies whihc should be extended to 'CF Taxonomy Post Type Binding' configutation
+       */
+      public function setup_extended_taxonomies( $configs ) {
+
+        if( !is_array( $configs ) ) {
+          $configs = array();
+        }
+
+        $extended_taxonomies = array();
+        foreach( $this->post_types as $post_type  ) {
+          $taxonomies = get_object_taxonomies( $post_type );
+          if( !empty( $taxonomies ) ) {
+            foreach( $taxonomies as $taxonomy ) {
+              /* Be sure taxonomy should not be excluded. */
+              if( in_array( $taxonomy, $this->exclude ) ) {
+                continue;
+              }
+              /* Determine if taxonomy already added to the list. */
+              if( isset( $extended_taxonomies[ $taxonomy ] ) ) {
+                continue;
+              }
+              $_taxonomy = get_taxonomy( $taxonomy );
+              if( empty( $_taxonomy ) ) {
+                continue;
+              }
+              $extended_taxonomies[ $taxonomy ] = $_taxonomy->labels->name;
+            }
+          }
+        }
+
+        foreach( $extended_taxonomies as $taxonomy => $label ){
+          array_push( $configs, array(
+            'taxonomy' => $taxonomy,
+            'post_type' => array(
+              '_'. $taxonomy,
+              array(
+                'label' => $label,
+                'public' => true,
+                'publicly_queryable' => true,
+                'show_ui' => false,
+                'show_in_menu' => false,
+                'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+              )
+            ),
+            'slave_title_editable' => false,
+            'slave_slug_editable' => false,
+          ) );
+        }
+
+        return $configs;
+      }
+
+    }
+
+  }
+}
