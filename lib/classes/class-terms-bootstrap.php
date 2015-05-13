@@ -78,11 +78,31 @@ namespace UsabilityDynamics\WPP {
         /** Add Search fields on 'All Properties' page ( admin panel ) */
         add_filter( 'wpp::overview::filter::fields', array( $this, 'get_filter_fields' ) );
 
+        /** Property Search shortcode hooks */
+        add_filter( 'wpp::search_attribute::label', array( $this, 'get_search_attribute_label' ), 10, 2 );
+
         /** on Clone Property action */
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
-
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+      }
+
+      /**
+       * Fix label for Taxonomy in Property Search form
+       *
+       * @see draw_property_search_form()
+       * @action wpp::search_attribute::label
+       * @param string $label
+       * @param string $taxonomy
+       * @return string $label
+       */
+      public function get_search_attribute_label( $label, $taxonomy ) {
+        $taxonomies = get_object_taxonomies( 'property' );
+        if( in_array( $taxonomy, $taxonomies ) ) {
+          $taxonomy = get_taxonomy( $taxonomy );
+          $label = $taxonomy->labels->name;
+        }
+        return $label;
       }
 
       /**
@@ -490,6 +510,7 @@ namespace UsabilityDynamics\WPP {
        */
       public function define_taxonomies( $taxonomies ) {
 
+
         /** Init Settings */
         $this->settings = new \UsabilityDynamics\Settings( array(
           'key'  => 'wpp_terms',
@@ -506,9 +527,56 @@ namespace UsabilityDynamics\WPP {
           $this->set( 'config.taxonomies', $taxonomies );
         }
 
+        /**
+         * Rich Taxonomies ( adds taxonomy post type )
+         */
         $this->maybe_extend_taxonomies();
 
-        return $this->get( 'config.taxonomies', array() );
+        /**
+         * Extend Property Search with Taxonomies
+         */
+        $this->extend_property_search_shortcode();
+
+        return $taxonomies;
+      }
+
+      /**
+       * Extend Property Search with Taxonomies
+       *
+       */
+      public function extend_property_search_shortcode() {
+        global $wp_properties;
+        /** Add taxonomies to searchable attributes */
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        if( !isset( $wp_properties[ 'searchable_attributes' ] ) || !is_array( $wp_properties[ 'searchable_attributes' ] ) ) {
+          $wp_properties[ 'searchable_attributes' ] = array();
+        }
+        foreach( $taxonomies as $taxonomy => $data ) {
+          if( isset( $data['public'] ) && $data['public'] ) {
+            array_push( $wp_properties[ 'searchable_attributes' ], $taxonomy );
+          }
+        }
+        ud_get_wp_property()->set( 'searchable_attributes', $wp_properties[ 'searchable_attributes' ] );
+
+        /** Take care about Taxonomies fields */
+        foreach( $taxonomies as $taxonomy => $data ){
+
+          add_filter( 'wpp_search_form_field_' . $taxonomy, function( $html, $taxonomy, $label, $value, $input, $random_id ) {
+            $terms = get_terms( $taxonomy, array( 'fields' => 'id=>name' ) );
+            ob_start();
+            ?>
+            <select id="<?php echo $random_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $taxonomy; ?> taxonomy <?php echo $taxonomy; ?>" name="wpp_search[<?php echo $taxonomy; ?>]">
+              <option value="-1"><?php _e( 'Any', ud_get_wpp_terms('domain') ) ?></option>
+              <?php foreach ( $terms as $term_id => $label ) : ?>
+                <option value="<?php echo $term_id; ?>" <?php selected( $value, $term_id ); ?>><?php echo $label; ?></option>
+              <?php endforeach; ?>
+            </select>
+            <?php
+            return ob_get_clean();
+
+          }, 10, 6 );
+
+        }
       }
 
       /**
