@@ -43,7 +43,7 @@ namespace UsabilityDynamics {
         ) );
         
         $structure = array();
-        
+
         foreach( (array) self::$args[ 'types' ] as $object_type => $type ) {
         
           $object_type = sanitize_key( $object_type );
