@@ -537,7 +537,7 @@ namespace UsabilityDynamics\WPP {
          */
         $this->extend_property_search_shortcode();
 
-        return $taxonomies;
+        return $this->get( 'config.taxonomies', array() );
       }
 
       /**
