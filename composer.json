@@ -17,6 +17,13 @@
     "type": "git",
     "url": "https://github.com/wp-property/wp-property-terms.git"
   },
+  "config": {
+    "preferred-install": "dist",
+    "github-protocols": [ "ssh" ],
+    "vendor-dir": "vendor/libraries",
+    "bin-dir": "vendor/bin",
+    "optimize-autoloader": true
+  },
   "require": {
     "php": ">=5.3",
     "usabilitydynamics/lib-wp-bootstrap": "~1.0",
@@ -42,6 +49,17 @@
     ]
   },
   "extra": {
+    "installer-paths": {
+      "vendor/plugins/{$name}": [
+        "type:wordpress-muplugin",
+        "type:wordpress-module",
+        "type:wordpress-plugin",
+        "type:wpackagist-plugin"
+      ],
+      "vendor/libraries/{$vendor}/{$name}": [
+        "type:wordpress-library"
+      ]
+    },
     "schemas": {
       "dependencies" : {
         "modules": {},
