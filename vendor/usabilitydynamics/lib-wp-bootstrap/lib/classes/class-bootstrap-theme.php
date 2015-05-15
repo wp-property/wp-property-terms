@@ -56,7 +56,7 @@ namespace UsabilityDynamics\WP {
         $this->define_license_manager();
         //** Maybe define license client */
         $this->define_license_client();
-        add_action( 'plugins_loaded', array( $this, 'pre_init' ), 100 );
+        add_action( 'after_setup_theme', array( $this, 'pre_init' ), 100 );
         $this->boot();
       }
       
