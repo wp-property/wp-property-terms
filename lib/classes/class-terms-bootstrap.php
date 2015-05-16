@@ -143,15 +143,16 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function maybe_extend_taxonomies() {
+
         $taxonomies = $this->get( 'config.taxonomies', array() );
 
         $exclude = array();
+
         foreach( $taxonomies as $key => $data ) {
           if( !$data[ 'rich_taxonomy' ] ) {
             array_push( $exclude, $key );
           }
         }
-
         new \UsabilityDynamics\CFTPB\Loader( array(
           'post_types' => array( 'property' ),
           'exclude' => $exclude,

@@ -50,9 +50,10 @@
           <li>
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_in_nav_menus]" <?php checked( $data['show_in_nav_menus'], true ); ?> value="true"/> <?php _e( 'Show in Nav Menus', ud_get_wpp_terms()->domain ); ?></label>
           </li>
-          <li>
+
+          <?php /*<li>
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_tagcloud]" <?php checked( $data['show_tagcloud'], true ); ?> value="true"/> <?php _e( 'Show in Tag Cloud', ud_get_wpp_terms()->domain ); ?></label>
-          </li>
+          </li> */ ?>
           <li>
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Menu and native WP Meta Box', ud_get_wpp_terms()->domain ); ?></label>
           </li>
