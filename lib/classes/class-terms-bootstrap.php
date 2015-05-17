@@ -430,9 +430,11 @@ namespace UsabilityDynamics\WPP {
         }
 
         $fields = array();
+
         foreach($taxonomies as $k => $d) {
 
           $field = array();
+
           switch( true ) {
             // Hidden
             case ( in_array( $k, $hidden ) ):
@@ -528,6 +530,7 @@ namespace UsabilityDynamics\WPP {
           $this->set( 'config.taxonomies', $taxonomies );
         }
 
+
         /**
          * Rich Taxonomies ( adds taxonomy post type )
          */
@@ -544,19 +547,24 @@ namespace UsabilityDynamics\WPP {
       /**
        * Extend Property Search with Taxonomies
        *
+       *
        */
       public function extend_property_search_shortcode() {
         global $wp_properties;
+
         /** Add taxonomies to searchable attributes */
         $taxonomies = $this->get( 'config.taxonomies', array() );
+
         if( !isset( $wp_properties[ 'searchable_attributes' ] ) || !is_array( $wp_properties[ 'searchable_attributes' ] ) ) {
           $wp_properties[ 'searchable_attributes' ] = array();
         }
+
         foreach( $taxonomies as $taxonomy => $data ) {
           if( isset( $data['public'] ) && $data['public'] ) {
             array_push( $wp_properties[ 'searchable_attributes' ], $taxonomy );
           }
         }
+
         ud_get_wp_property()->set( 'searchable_attributes', $wp_properties[ 'searchable_attributes' ] );
 
         /** Take care about Taxonomies fields */

@@ -571,7 +571,7 @@ jQuery(document).ready(function($) {
 		return $thumbnail;
 	}
 	
-	public function handle_taxonomy_archive($posts, &$query) {
+	static public function handle_taxonomy_archive($posts, &$query) {
 		if ($query->is_main_query() && $query->is_page() && empty($posts) && $post_type_archive = self::supports($query->get('pagename'))) {
 			global $wp_the_query, $wp_query;
 			// We want the "taxonomy" archive, which should actually be the hidden post-type archive.
@@ -602,7 +602,7 @@ jQuery(document).ready(function($) {
 		return $posts;
 	}
 	
-	public function handle_taxonomy_archive_wp_title($title, $sep, $seplocation) {
+	static public function handle_taxonomy_archive_wp_title($title, $sep, $seplocation) {
 		if (is_main_query() && is_tax() && is_archive()) {
 			$obj = get_queried_object();
 			if (empty($obj->taxonomy) && !empty($obj->label)) {
@@ -641,7 +641,7 @@ jQuery(document).ready(function($) {
 		remove_action('template_redirect', 'cf_taxonomy_post_type_binding::readd_paged_var', 1000);
 	}
 	
-	public function handle_taxonomy_archive_first_page_link($link_text) {
+	static public function handle_taxonomy_archive_first_page_link($link_text) {
 		if (empty($link_text)) {
 			$link_text = remove_query_arg('paged', $_SERVER['REQUEST_URI']);
 		}
