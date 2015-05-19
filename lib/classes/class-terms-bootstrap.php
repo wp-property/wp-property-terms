@@ -38,7 +38,7 @@ namespace UsabilityDynamics\WPP {
           /** Add Settings on Developer Tab */
           add_filter( 'wpp::settings_developer::tabs', function( $tabs ){
             $tabs['terms'] = array(
-              'label' => __( 'Taxonomies', $this->domain ),
+              'label' => __( 'Categorical', $this->domain ),
               'template' => $this->path( 'static/views/admin/settings-developer-terms.php', 'dir' ),
               'order' => 25
             );
@@ -143,15 +143,16 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function maybe_extend_taxonomies() {
+
         $taxonomies = $this->get( 'config.taxonomies', array() );
 
         $exclude = array();
+
         foreach( $taxonomies as $key => $data ) {
           if( !$data[ 'rich_taxonomy' ] ) {
             array_push( $exclude, $key );
           }
         }
-
         new \UsabilityDynamics\CFTPB\Loader( array(
           'post_types' => array( 'property' ),
           'exclude' => $exclude,
@@ -429,9 +430,11 @@ namespace UsabilityDynamics\WPP {
         }
 
         $fields = array();
+
         foreach($taxonomies as $k => $d) {
 
           $field = array();
+
           switch( true ) {
             // Hidden
             case ( in_array( $k, $hidden ) ):
@@ -543,19 +546,24 @@ namespace UsabilityDynamics\WPP {
       /**
        * Extend Property Search with Taxonomies
        *
+       *
        */
       public function extend_property_search_shortcode() {
         global $wp_properties;
+
         /** Add taxonomies to searchable attributes */
         $taxonomies = $this->get( 'config.taxonomies', array() );
+
         if( !isset( $wp_properties[ 'searchable_attributes' ] ) || !is_array( $wp_properties[ 'searchable_attributes' ] ) ) {
           $wp_properties[ 'searchable_attributes' ] = array();
         }
+
         foreach( $taxonomies as $taxonomy => $data ) {
           if( isset( $data['public'] ) && $data['public'] ) {
             array_push( $wp_properties[ 'searchable_attributes' ], $taxonomy );
           }
         }
+
         ud_get_wp_property()->set( 'searchable_attributes', $wp_properties[ 'searchable_attributes' ] );
 
         /** Take care about Taxonomies fields */

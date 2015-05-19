@@ -13,14 +13,21 @@
   <tr>
     <th class='wpp_draggable_handle'>&nbsp;</th>
     <th class='wpp_attribute_name_col'><?php _e( 'Label', 'wpp' ) ?></th>
-    <th class='wpp_attribute_slug_col'><?php _e( 'Slug', 'wpp' ) ?></th>
+    <th class='wpp_attribute_group_col'><?php _e( 'Group', 'wpp' ) ?></th>
     <th class='wpp_settings_col'><?php _e( 'Settings', 'wpp' ) ?></th>
     <th class='wpp_delete_col'>&nbsp;</th>
   </tr>
   </thead>
   <tbody>
-  <?php foreach( ud_get_wpp_terms( 'config.taxonomies', array() ) as $slug => $data ): ?>
+  <?php foreach( (array) ud_get_wpp_terms( 'config.taxonomies', array() ) as $slug => $data ): ?>
+    <?php $gslug = false; ?>
+    <?php $group = false; ?>
     <?php $data = ud_get_wpp_terms()->prepare_taxonomy( $data, $slug ); ?>
+    <?php if( !empty( $wp_properties[ 'property_taxonomy_groups' ][ $slug ] ) ) : ?>
+      <?php $gslug = $wp_properties[ 'property_taxonomy_groups' ][ $slug ]; ?>
+      <?php $group = $wp_properties[ 'property_groups' ][ $gslug ]; ?>
+    <?php endif; ?>
+
     <tr class="wpp_dynamic_table_row" slug="<?php echo $slug; ?>" new_row='false'>
       <th class='wpp_draggable_handle'>&nbsp;</th>
       <td>
@@ -31,31 +38,46 @@
           <li class="hide-on-new-row">
             <a href="<?php echo admin_url( "edit-tags.php?taxonomy={$slug}&post_type=property" ); ?>"><?php _e( 'Manage Terms', ud_get_wpp_terms()->domain ); ?></a>
           </li>
-        </ul>
-      <td>
-        <ul>
-          <li>
+
+          </li>
             <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>"/>
           </li>
+
         </ul>
+
+      <td class="wpp_attribute_group_col">
+        <input type="text" class="wpp_taxonomy_group" value="" />
       </td>
+
+
       <td>
         <ul>
+
           <li>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][searchable]" <?php checked( $data['searchable'], true ); ?> value="true"/> <?php _e( 'searchable', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+          <li>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][public]" <?php checked( $data['public'], false ); ?> value="true"/> <?php _e( 'Admin Only', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+          <?php /*
+          <li class="wpp_hidden"">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][hierarchical]" <?php checked( $data['hierarchical'], true ); ?> value="true"/> <?php _e( 'Hierarchical', ud_get_wpp_terms()->domain ); ?></label>
           </li>
-          <li>
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][public]" <?php checked( $data['public'], true ); ?> value="true"/> <?php _e( 'Public', ud_get_wpp_terms()->domain ); ?></label>
-          </li>
-          <li>
+
+          <li class="wpp_hidden"">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_in_nav_menus]" <?php checked( $data['show_in_nav_menus'], true ); ?> value="true"/> <?php _e( 'Show in Nav Menus', ud_get_wpp_terms()->domain ); ?></label>
           </li>
+
           <li>
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_tagcloud]" <?php checked( $data['show_tagcloud'], true ); ?> value="true"/> <?php _e( 'Show in Tag Cloud', ud_get_wpp_terms()->domain ); ?></label>
           </li>
-          <li>
+
+          <li class="wpp_hidden"">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Menu and native WP Meta Box', ud_get_wpp_terms()->domain ); ?></label>
           </li>
+            */ ?>
           <li>
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Rich Taxonomy', ud_get_wpp_terms()->domain ); ?></label>
           </li>
