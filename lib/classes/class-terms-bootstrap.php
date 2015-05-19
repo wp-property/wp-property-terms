@@ -530,7 +530,6 @@ namespace UsabilityDynamics\WPP {
           $this->set( 'config.taxonomies', $taxonomies );
         }
 
-
         /**
          * Rich Taxonomies ( adds taxonomy post type )
          */
