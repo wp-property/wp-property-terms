@@ -38,7 +38,7 @@ namespace UsabilityDynamics\WPP {
           /** Add Settings on Developer Tab */
           add_filter( 'wpp::settings_developer::tabs', function( $tabs ){
             $tabs['terms'] = array(
-              'label' => __( 'Categorical', $this->domain ),
+              'label' => __( 'Taxonomies', $this->domain ),
               'template' => $this->path( 'static/views/admin/settings-developer-terms.php', 'dir' ),
               'order' => 25
             );
@@ -381,6 +381,11 @@ namespace UsabilityDynamics\WPP {
               $taxonomies[ $taxonomy ] = $this->prepare_taxonomy( $v, $taxonomy );
             }
             $this->set( 'config.taxonomies', $taxonomies );
+          }
+
+          /** Take care about taxonomies groups */
+          if( isset($data[ 'wpp_terms' ][ 'groups' ]) ) {
+            $this->set( 'config.groups', $data[ 'wpp_terms' ][ 'groups' ] );
           }
 
           /** Take care about hidden taxonomies */
