@@ -4,11 +4,22 @@
  * Section 'Taxonomies'
  */
 
-?>
-<h3><?php printf( __( '%1s Taxonomies', 'wpp' ), WPP_F::property_label() ); ?></h3>
-<p><?php printf( __( 'Manage your %s Taxonomies here. Note, you can not remove all taxonomies, in this case default WP-Property taxonomies will be returned back.', ud_get_wpp_terms()->domain ), WPP_F::property_label() ); ?></p>
+wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scripts/wpp.terms.settings.js', 'url' ), array( 'wp-property-admin-settings' ) );
 
-<table id="" class="ud_ui_dynamic_table widefat">
+?>
+<div>
+  <h3 style="float:left;"><?php printf( __( '%1s Taxonomies', ud_get_wpp_terms()->domain ), \WPP_F::property_label() ); ?></h3>
+  <div class="wpp_property_stat_functions">
+    <input type="button" class="wpp_all_advanced_settings button-secondary" action="expand" value="<?php _e( 'Expand all', 'wpp' ) ?>" />
+    <input type="button" class="wpp_all_advanced_settings button-secondary" action="collapse" value="<?php _e( 'Collapse all', 'wpp' ) ?>" />
+    <input type="button" class="sort_stats_by_groups button-secondary" value="<?php _e( 'Sort by Groups', 'wpp' ) ?>"/>
+  </div>
+  <div class="clear"></div>
+</div>
+
+<p style="margin-top: 0;"><?php printf( __( 'Manage your %s Taxonomies here. Note, you can not remove all taxonomies, in this case default WP-Property taxonomies will be returned back.', ud_get_wpp_terms()->domain ), WPP_F::property_label() ); ?></p>
+
+<table id="" class="wpp_sortable wpp_inquiry_attribute_fields ud_ui_dynamic_table widefat">
   <thead>
   <tr>
     <th class='wpp_draggable_handle'>&nbsp;</th>
@@ -34,44 +45,45 @@
           <li>
             <input class="slug_setter" type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][label]" value="<?php echo $data['label']; ?>"/>
           </li>
+          <li class="wpp_development_advanced_option">
+            <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>"/>
+          </li>
           <li class="hide-on-new-row">
             <a href="<?php echo admin_url( "edit-tags.php?taxonomy={$slug}&post_type=property" ); ?>"><?php _e( 'Manage Terms', ud_get_wpp_terms()->domain ); ?></a>
           </li>
-
+          <li>
+            <span class="wpp_show_advanced"><?php _e( 'Toggle Advanced Settings', ud_get_wpp_terms()->domain ); ?></span>
           </li>
-            <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>"/>
-          </li>
-
         </ul>
 
       <td class="wpp_attribute_group_col">
-        <input type="text" class="wpp_attribute_group wpp_taxonomy_group" value="<?php echo( !empty( $group[ 'name' ] ) ? $group[ 'name' ] : "" ); ?>"/>
+        <input type="text" class="wpp_attribute_group wpp_taxonomy_group wpp_group" value="<?php echo( !empty( $group[ 'name' ] ) ? $group[ 'name' ] : "" ); ?>"/>
         <input type="hidden" class="wpp_group_slug" name="wpp_terms[groups][<?php echo $slug; ?>]" value="<?php echo( !empty( $gslug ) ? $gslug : "" ); ?>">
       </td>
 
       <td>
         <ul>
-          <li class=""">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][hierarchical]" <?php checked( $data['hierarchical'], true ); ?> value="true"/> <?php _e( 'Hierarchical', ud_get_wpp_terms()->domain ); ?></label>
-          </li>
-
-          <li class=""">
+          <li class="">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][public]" <?php checked( $data['public'], true ); ?> value="true"/> <?php _e( 'Public & Searchable', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
-          <li class=""">
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][hierarchical]" <?php checked( $data['hierarchical'], true ); ?> value="true"/> <?php _e( 'Hierarchical', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+          <li class="wpp_development_advanced_option">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_in_nav_menus]" <?php checked( $data['show_in_nav_menus'], true ); ?> value="true"/> <?php _e( 'Show in Nav Menus', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
-          <li>
+          <li class="wpp_development_advanced_option">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_tagcloud]" <?php checked( $data['show_tagcloud'], true ); ?> value="true"/> <?php _e( 'Show in Tag Cloud', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
-          <li class=""">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Menu and native WP Meta Box', ud_get_wpp_terms()->domain ); ?></label>
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php printf( __( 'Show in %s Menu and add native Meta Box', ud_get_wpp_terms()->domain ), \WPP_F::property_label( 'plural' ) ); ?></label>
           </li>
 
-          <li>
+          <li class="wpp_development_advanced_option">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Rich Taxonomy', ud_get_wpp_terms()->domain ); ?></label>
           </li>
         </ul>
