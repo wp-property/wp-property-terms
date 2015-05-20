@@ -63,6 +63,10 @@ wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scri
 
       <td>
         <ul>
+          <li class="wpp_development_advanced_option">
+            <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>"/></label>
+          </li>
+
           <li class="">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][public]" <?php checked( $data['public'], true ); ?> value="true"/> <?php _e( 'Public & Searchable', ud_get_wpp_terms()->domain ); ?></label>
           </li>

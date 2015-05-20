@@ -106,6 +106,7 @@ namespace UsabilityDynamics\CFTPB {
 
         foreach( $extended_taxonomies as $taxonomy ){
           $_taxonomy = get_taxonomy( $taxonomy );
+
           array_push( $configs, array(
             'taxonomy' => $taxonomy,
             'post_type' => array(
@@ -117,6 +118,7 @@ namespace UsabilityDynamics\CFTPB {
                 'publicly_queryable' => true,
                 'show_ui' => false,
                 'show_in_menu' => false,
+                'rewrite' => $_taxonomy->rewrite,
                 'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
               )
             ),

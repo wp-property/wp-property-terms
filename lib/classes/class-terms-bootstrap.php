@@ -152,6 +152,7 @@ namespace UsabilityDynamics\WPP {
             array_push( $exclude, $key );
           }
         }
+
         new \UsabilityDynamics\CFTPB\Loader( array(
           'post_types' => array( 'property' ),
           'exclude' => $exclude,
