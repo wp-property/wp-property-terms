@@ -67,7 +67,6 @@ namespace UsabilityDynamics\WPP {
 
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
-        add_filter( 'wpp::meta_boxes::icons', array( $this, 'add_meta_box_icon' ), 99 );
         /** Handle inherited taxonomies on property saving. */
         add_action( 'save_property', array( $this, 'save_property' ), 11 );
 
@@ -221,6 +220,9 @@ namespace UsabilityDynamics\WPP {
               'name' => $v['label'],
               'type' => 'taxonomy',
               'multiple' => true,
+              'js_options' => array(
+                'allowClear' => false,
+              ),
               'options' => array(
                 'taxonomy' => $k,
                 'type' => 'select_advanced',
@@ -403,21 +405,16 @@ namespace UsabilityDynamics\WPP {
       }
 
       /**
-       * @param $icons
-       * @return mixed
-       */
-      public function add_meta_box_icon( $icons ) {
-        $icons['_terms'] = 'dashicons-search';
-        return $icons;
-      }
-
-      /**
        * Register Meta Box for taxonomies on Edit Property Page
        *
        * @param $meta_boxes
        * @return array
        */
       public function add_meta_box( $meta_boxes ) {
+
+        if( !is_array( $meta_boxes ) ) {
+          $meta_boxes = array();
+        }
 
         $type = false;
         if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
@@ -426,6 +423,7 @@ namespace UsabilityDynamics\WPP {
         }
 
         $taxonomies = $this->get( 'config.taxonomies', array() );
+        $groups = $this->get( 'config.groups', array() );
 
         $hidden = array();
         $inherited = array();
@@ -453,7 +451,7 @@ namespace UsabilityDynamics\WPP {
                 'desc' => sprintf( __( 'The terms are inherited from Parent %s.', $this->get('domain') ), \WPP_F::property_label() ),
                 'options' => array(
                   'taxonomy' => $k,
-                  'type' => 'readonly',
+                  'type' => 'inherited',
                   'args' => array(),
                 )
               );
@@ -478,38 +476,61 @@ namespace UsabilityDynamics\WPP {
           }
 
           if( !empty($field) ) {
-            array_push( $fields, $field);
-          }
 
+            $group = !empty( $groups[ $k ] ) ? $groups[ $k ] : '_general';
+
+            $pushed = false;
+            foreach( $meta_boxes as $k => $meta_box ) {
+              if( $group == $meta_box[ 'id' ] ) {
+                if( !isset( $meta_boxes[$k][ 'fields' ] ) || !is_array( $meta_boxes[$k][ 'fields' ] ) ) {
+                  $meta_boxes[$k][ 'fields' ] = array();
+                }
+                array_push( $meta_boxes[$k][ 'fields' ], $field );
+                $pushed = true;
+                break;
+              }
+            }
+
+            if( !$pushed ) {
+              array_push( $fields, $field );
+            }
+
+          }
 
         }
 
-        $taxonomy_box = array(
-          'id' => '_terms',
-          'title' => __( 'Taxonomies', ud_get_wpp_terms()->domain ),
-          'pages' => array( 'property' ),
-          'context' => 'advanced',
-          'priority' => 'low',
-          'fields' => $fields,
-        );
+        /** It may happen only if we could not find related group. */
+        if( !empty( $fields ) ) {
 
-        $_meta_boxes = array();
-        $added = false;
-        foreach( $meta_boxes as $meta_box ) {
-          /** We want to add Taxonomies under General Meta Box */
-          array_push($_meta_boxes,  $meta_box );
-          if( $meta_box['id'] == '_general' ) {
+          $taxonomy_box = array(
+            'id' => '_terms',
+            'title' => __( 'Taxonomies', ud_get_wpp_terms()->domain ),
+            'pages' => array( 'property' ),
+            'context' => 'advanced',
+            'priority' => 'low',
+            'fields' => $fields,
+          );
+
+          $_meta_boxes = array();
+          $added = false;
+          foreach( $meta_boxes as $meta_box ) {
+            /** We want to add Taxonomies under General Meta Box */
+            array_push($_meta_boxes,  $meta_box );
+            if( $meta_box['id'] == '_general' ) {
+              array_push($_meta_boxes,  $taxonomy_box );
+              $added = true;
+            }
+          }
+
+          /* In case we did not add meta box, we do it at last. */
+          if(!$added) {
             array_push($_meta_boxes,  $taxonomy_box );
-            $added = true;
           }
+          $meta_boxes = $_meta_boxes;
+
         }
 
-        /* In case we did not add meta box, we do it at last. */
-        if(!$added) {
-          array_push($_meta_boxes,  $taxonomy_box );
-        }
-
-        return $_meta_boxes;
+        return $meta_boxes;
       }
 
       /**
