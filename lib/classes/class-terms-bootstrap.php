@@ -38,7 +38,7 @@ namespace UsabilityDynamics\WPP {
           /** Add Settings on Developer Tab */
           add_filter( 'wpp::settings_developer::tabs', function( $tabs ){
             $tabs['terms'] = array(
-              'label' => __( 'Taxonomies', $this->domain ),
+              'label' => __( 'Terms', $this->domain ),
               'template' => $this->path( 'static/views/admin/settings-developer-terms.php', 'dir' ),
               'order' => 25
             );
@@ -58,6 +58,9 @@ namespace UsabilityDynamics\WPP {
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
 
         }
+
+        /** Define Plugin Settings. */
+        //add_filter( 'init', array( $this, 'define_settings' ) );
 
         /** Define our custom taxonomies. */
         add_filter( 'wpp_taxonomies', array( $this, 'define_taxonomies' ) );
@@ -84,6 +87,34 @@ namespace UsabilityDynamics\WPP {
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+      }
+
+      /**
+       *
+       */
+      public function define_settings() {
+
+        /** Init Settings */
+        $this->settings = new \UsabilityDynamics\Settings( array(
+          'key'  => 'wpp_terms',
+          'store'  => 'options',
+          'data' => array(
+            'name' => $this->name,
+            'version' => $this->args[ 'version' ],
+            'domain' => $this->domain,
+            'types' => array(
+              'multiple' => array(
+                'label' => __( 'Multiple Terms', $this->domain ),
+                'desc'  => sprintf( __( 'Native WordPress functionality. %s can have multiple terms.', $this->domain ), \WPP_F::property_label() ),
+              ),
+              'unique' => array(
+                'label' => __( 'Unique Term', $this->domain ),
+                'desc'  => sprintf( __( '%s can have only one term. Be sure to not enable native Meta Box for current taxonomy to prevent issues.', $this->domain ), \WPP_F::property_label() ),
+              ),
+            )
+          )
+        ));
+
       }
 
       /**
@@ -540,7 +571,6 @@ namespace UsabilityDynamics\WPP {
        */
       public function define_taxonomies( $taxonomies ) {
 
-
         /** Init Settings */
         $this->settings = new \UsabilityDynamics\Settings( array(
           'key'  => 'wpp_terms',
@@ -549,6 +579,16 @@ namespace UsabilityDynamics\WPP {
             'name' => $this->name,
             'version' => $this->args[ 'version' ],
             'domain' => $this->domain,
+            'types' => array(
+              'multiple' => array(
+                'label' => __( 'Multiple Terms', $this->domain ),
+                'desc'  => sprintf( __( 'Native WordPress functionality. %s can have multiple terms.', $this->domain ), \WPP_F::property_label() ),
+              ),
+              'unique' => array(
+                'label' => __( 'Unique Term', $this->domain ),
+                'desc'  => sprintf( __( '%s can have only one term. Be sure to not enable native Meta Box for current taxonomy to prevent issues.', $this->domain ), \WPP_F::property_label() ),
+              ),
+            )
           )
         ));
 

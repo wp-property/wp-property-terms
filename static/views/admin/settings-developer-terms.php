@@ -1,14 +1,14 @@
 <?php
 /**
  * Settings 'Developer' Tab
- * Section 'Taxonomies'
+ * Section 'Terms'
  */
 
 wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scripts/wpp.terms.settings.js', 'url' ), array( 'wp-property-admin-settings' ) );
 
 ?>
 <div>
-  <h3 style="float:left;"><?php printf( __( '%1s Taxonomies', ud_get_wpp_terms()->domain ), \WPP_F::property_label() ); ?></h3>
+  <h3 style="float:left;"><?php printf( __( '%1s Terms', ud_get_wpp_terms()->domain ), \WPP_F::property_label() ); ?></h3>
   <div class="wpp_property_stat_functions">
     <input type="button" class="wpp_all_advanced_settings button-secondary" action="expand" value="<?php _e( 'Expand all', 'wpp' ) ?>" />
     <input type="button" class="wpp_all_advanced_settings button-secondary" action="collapse" value="<?php _e( 'Collapse all', 'wpp' ) ?>" />
@@ -23,9 +23,10 @@ wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scri
   <thead>
   <tr>
     <th class='wpp_draggable_handle'>&nbsp;</th>
-    <th class='wpp_attribute_name_col'><?php _e( 'Label', 'wpp' ) ?></th>
-    <th class='wpp_attribute_group_col'><?php _e( 'Group', 'wpp' ) ?></th>
-    <th class='wpp_settings_col'><?php _e( 'Settings', 'wpp' ) ?></th>
+    <th class='wpp_attribute_name_col'><?php _e( 'Label', ud_get_wpp_terms()->domain ) ?></th>
+    <th class='wpp_attribute_group_col'><?php _e( 'Group', ud_get_wpp_terms()->domain ) ?></th>
+    <th class='wpp_settings_col'><?php _e( 'Settings', ud_get_wpp_terms()->domain ) ?></th>
+    <th class='wpp_settings_col'><?php _e( 'Type', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_delete_col'>&nbsp;</th>
   </tr>
   </thead>
@@ -91,6 +92,14 @@ wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scri
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Rich Taxonomy', ud_get_wpp_terms()->domain ); ?></label>
           </li>
         </ul>
+      </td>
+
+      <td>
+        <select name="wpp_terms[types][<?php echo $slug; ?>]">
+          <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
+            <option value="<?php echo $k ?>" <?php echo selected( $slug, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
+          <?php endforeach; ?>
+        </select>
       </td>
 
       <td>
