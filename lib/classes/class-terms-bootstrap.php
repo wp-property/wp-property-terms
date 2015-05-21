@@ -582,11 +582,11 @@ namespace UsabilityDynamics\WPP {
             'types' => array(
               'multiple' => array(
                 'label' => __( 'Multiple Terms', $this->domain ),
-                'desc'  => sprintf( __( 'Native WordPress functionality. %s can have multiple terms.', $this->domain ), \WPP_F::property_label() ),
+                'desc'  => __( 'Native WordPress functionality. Property can have multiple terms.', $this->domain ),
               ),
               'unique' => array(
                 'label' => __( 'Unique Term', $this->domain ),
-                'desc'  => sprintf( __( '%s can have only one term. Be sure to not enable native Meta Box for current taxonomy to prevent issues.', $this->domain ), \WPP_F::property_label() ),
+                'desc'  => __( 'Property can have only one term. Be sure to not enable native Meta Box for current taxonomy to prevent issues.', $this->domain ),
               ),
             )
           )
