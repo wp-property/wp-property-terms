@@ -122,7 +122,7 @@ namespace UsabilityDynamics\WPP {
           $taxonomy = get_taxonomy( $taxonomy );
           $label = $taxonomy->labels->name;
           if( is_admin() ) {
-            $label .= '(' . __( 'taxonomy' ) . ')';
+            $label .= ' (' . __( 'taxonomy' ) . ')';
           }
         }
         return $label;
