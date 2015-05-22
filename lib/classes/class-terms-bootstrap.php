@@ -59,9 +59,6 @@ namespace UsabilityDynamics\WPP {
 
         }
 
-        /** Define Plugin Settings. */
-        //add_filter( 'init', array( $this, 'define_settings' ) );
-
         /** Define our custom taxonomies. */
         add_filter( 'wpp_taxonomies', array( $this, 'define_taxonomies' ) );
 
@@ -87,34 +84,6 @@ namespace UsabilityDynamics\WPP {
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
-      }
-
-      /**
-       *
-       */
-      public function define_settings() {
-
-        /** Init Settings */
-        $this->settings = new \UsabilityDynamics\Settings( array(
-          'key'  => 'wpp_terms',
-          'store'  => 'options',
-          'data' => array(
-            'name' => $this->name,
-            'version' => $this->args[ 'version' ],
-            'domain' => $this->domain,
-            'types' => array(
-              'multiple' => array(
-                'label' => __( 'Multiple Terms', $this->domain ),
-                'desc'  => sprintf( __( 'Native WordPress functionality. %s can have multiple terms.', $this->domain ), \WPP_F::property_label() ),
-              ),
-              'unique' => array(
-                'label' => __( 'Unique Term', $this->domain ),
-                'desc'  => sprintf( __( '%s can have only one term. Be sure to not enable native Meta Box for current taxonomy to prevent issues.', $this->domain ), \WPP_F::property_label() ),
-              ),
-            )
-          )
-        ));
-
       }
 
       /**
@@ -582,7 +551,7 @@ namespace UsabilityDynamics\WPP {
             'types' => array(
               'multiple' => array(
                 'label' => __( 'Multiple Terms', $this->domain ),
-                'desc'  => __( 'Native WordPress functionality. Property can have multiple terms.', $this->domain ),
+                'desc'  => __( 'Property can have multiple terms. It\'s a native WordPress functionality.', $this->domain ),
               ),
               'unique' => array(
                 'label' => __( 'Unique Term', $this->domain ),

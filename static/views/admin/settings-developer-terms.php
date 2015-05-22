@@ -5,6 +5,7 @@
  */
 
 wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scripts/wpp.terms.settings.js', 'url' ), array( 'wp-property-admin-settings' ) );
+wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/styles/wpp.terms.settings.css', 'url' ) );
 
 ?>
 <div>
@@ -85,7 +86,7 @@ wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scri
           </li>
 
           <li class="wpp_development_advanced_option">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php printf( __( 'Show in %s Menu and add native Meta Box', ud_get_wpp_terms()->domain ), \WPP_F::property_label( 'plural' ) ); ?></label>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Admin Menu and add native Meta Box', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
           <li class="wpp_development_advanced_option">
@@ -95,9 +96,9 @@ wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scri
       </td>
 
       <td>
-        <select name="wpp_terms[types][<?php echo $slug; ?>]">
+        <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
           <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
-            <option value="<?php echo $k ?>" <?php echo selected( $slug, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
+            <option value="<?php echo $k ?>" <?php echo selected( $slug, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
           <?php endforeach; ?>
         </select>
       </td>
