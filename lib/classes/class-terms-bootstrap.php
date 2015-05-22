@@ -121,6 +121,9 @@ namespace UsabilityDynamics\WPP {
         if( in_array( $taxonomy, $taxonomies ) ) {
           $taxonomy = get_taxonomy( $taxonomy );
           $label = $taxonomy->labels->name;
+          if( is_admin() ) {
+            $label .= '(' . __( 'taxonomy' ) . ')';
+          }
         }
         return $label;
       }
@@ -601,20 +604,22 @@ namespace UsabilityDynamics\WPP {
         /**
          * Extend Property Search with Taxonomies
          */
-        $this->extend_property_search_shortcode();
+        $this->extend_wpp_settings();
 
         return $this->get( 'config.taxonomies', array() );
       }
 
       /**
-       * Extend Property Search with Taxonomies
-       *
+       * Extend WP-Property settings:
+       * - Extend Property Search with Taxonomies
+       * - Adds Taxonomies to groups
        *
        */
-      public function extend_property_search_shortcode() {
+      public function extend_wpp_settings() {
         global $wp_properties;
 
-        /** Add taxonomies to searchable attributes */
+        /** STEP 1. Add taxonomies to searchable attributes */
+
         $taxonomies = $this->get( 'config.taxonomies', array() );
 
         if( !isset( $wp_properties[ 'searchable_attributes' ] ) || !is_array( $wp_properties[ 'searchable_attributes' ] ) ) {
@@ -628,6 +633,20 @@ namespace UsabilityDynamics\WPP {
         }
 
         ud_get_wp_property()->set( 'searchable_attributes', $wp_properties[ 'searchable_attributes' ] );
+
+        /** STEP 2. Add taxonomies to property stats groups */
+
+        $groups = $this->get( 'config.groups', array() );
+
+        if( !isset( $wp_properties[ 'property_stats_groups' ] ) || !is_array( $wp_properties[ 'property_stats_groups' ] ) ) {
+          $wp_properties[ 'property_stats_groups' ] = array();
+        }
+
+        $wp_properties[ 'property_stats_groups' ] = array_merge( $wp_properties[ 'property_stats_groups' ], $groups );
+
+        ud_get_wp_property()->set( 'property_stats_groups', $wp_properties[ 'property_stats_groups' ] );
+
+        /** STEP 3. Extend Property Search form */
 
         /** Take care about Taxonomies fields */
         foreach( $taxonomies as $taxonomy => $data ){
