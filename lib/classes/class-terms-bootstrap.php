@@ -59,6 +59,9 @@ namespace UsabilityDynamics\WPP {
 
         }
 
+        /** Load admin scripts */
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
         /** Define our custom taxonomies. */
         add_filter( 'wpp_taxonomies', array( $this, 'define_taxonomies' ) );
 
@@ -84,6 +87,24 @@ namespace UsabilityDynamics\WPP {
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+      }
+
+      /**
+       * Manage Admin Scripts and Styles.
+       *
+       */
+      public function enqueue_scripts() {
+        global $current_screen;
+
+        switch( $current_screen->id ) {
+
+          /** Edit Property page */
+          case 'property':
+            wp_enqueue_style( 'wpp-terms-admin-property', $this->path( '/static/styles/wpp.terms.property.css', 'url' ) );
+            break;
+
+        }
+
       }
 
       /**
@@ -391,6 +412,11 @@ namespace UsabilityDynamics\WPP {
             $this->set( 'config.groups', $data[ 'wpp_terms' ][ 'groups' ] );
           }
 
+          /** Take care about taxonomies types */
+          if( isset($data[ 'wpp_terms' ][ 'types' ]) ) {
+            $this->set( 'config.types', $data[ 'wpp_terms' ][ 'types' ] );
+          }
+
           /** Take care about hidden taxonomies */
           if( isset($data[ 'wpp_terms' ][ 'hidden' ]) ) {
             $this->set( 'config.hidden', $data[ 'wpp_terms' ][ 'hidden' ] );
@@ -425,6 +451,7 @@ namespace UsabilityDynamics\WPP {
 
         $taxonomies = $this->get( 'config.taxonomies', array() );
         $groups = $this->get( 'config.groups', array() );
+        $types = $this->get( 'config.types', array() );
 
         $hidden = array();
         $inherited = array();
@@ -467,10 +494,10 @@ namespace UsabilityDynamics\WPP {
                 'name' => $d['label'],
                 'id' => $k,
                 'type' => 'taxonomy',
-                'multiple' => true,
+                'multiple' => ( isset( $types[ $k ] ) && $types[ $k ] == 'unique' ? false : true ),
                 'options' => array(
                   'taxonomy' => $k,
-                  'type' => 'select_advanced',
+                  'type' => ( isset( $d[ 'hierarchical' ] ) && $d[ 'hierarchical' ] == true ? 'select_tree' : 'select_advanced' ),
                   'args' => array(),
               ) );
               break;

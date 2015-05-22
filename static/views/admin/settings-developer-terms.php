@@ -90,7 +90,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
           </li>
 
           <li class="wpp_development_advanced_option">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Rich Taxonomy', ud_get_wpp_terms()->domain ); ?></label>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Add Term Post', ud_get_wpp_terms()->domain ); ?></label>
           </li>
         </ul>
       </td>
@@ -98,7 +98,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       <td>
         <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
           <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
-            <option value="<?php echo $k ?>" <?php echo selected( $slug, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
+            <option value="<?php echo $k ?>" <?php echo selected( $k, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
           <?php endforeach; ?>
         </select>
       </td>

@@ -49,6 +49,7 @@ module.exports = function build( grunt ) {
         },
         files: {
           'static/styles/wpp.terms.settings.css': [ 'static/styles/src/wpp.terms.settings.less' ],
+          'static/styles/wpp.terms.property.css': [ 'static/styles/src/wpp.terms.property.less' ],
           'static/styles/fields/wpp-taxonomy-inherited.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
         }
       },
@@ -58,6 +59,7 @@ module.exports = function build( grunt ) {
         },
         files: {
           'static/styles/wpp.terms.settings.dev.css': [ 'static/styles/src/wpp.terms.settings.less' ],
+          'static/styles/wpp.terms.property.dev.css': [ 'static/styles/src/wpp.terms.property.less' ],
           'static/styles/fields/wpp-taxonomy-inherited.dev.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
         }
       }
