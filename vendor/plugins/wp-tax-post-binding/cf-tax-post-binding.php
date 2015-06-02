@@ -9,8 +9,6 @@
  * Author URI: http://crowdfavorite.com
  */
 
-
-
 if (!defined('CF_TAX_POST_BINDING')) {
 
 define('CF_TAX_POST_BINDING', true);
@@ -148,8 +146,7 @@ class cf_taxonomy_post_type_binding {
 	private static $term_before;
 	private static $_stored_paged;
 
-	public static function init() {
-
+	public static function on_wp_loaded() {
 		$configs = apply_filters('cftpb_configs', array());
 		if (!is_array($configs)) {
 			trigger_error(__('Invalid CF Extended Taxonomy configurations. Plugin contents will not be loaded.', 'cf-tax-post-binding'), E_USER_WARNING);
@@ -239,7 +236,7 @@ class cf_taxonomy_post_type_binding {
 					do_action('cftpb_register_post_type', $config['post_type'][0], $config);
 					$post_type = $config['post_type'][0];
 				}
-
+				
 				if (empty($tax_name) && is_array($config['taxonomy'])) {
 					if (!in_array($post_type, $config['taxonomy'][1])) {
 						$config['taxonomy'][1][] = $post_type;
@@ -570,7 +567,7 @@ jQuery(document).ready(function($) {
 		}
 		return $thumbnail;
 	}
-
+	
 	public static function handle_taxonomy_archive($posts, &$query) {
 		if ($query->is_main_query() && $query->is_page() && empty($posts) && $post_type_archive = self::supports($query->get('pagename'))) {
 			global $wp_the_query, $wp_query;
@@ -601,7 +598,7 @@ jQuery(document).ready(function($) {
 		}
 		return $posts;
 	}
-
+	
 	public static function handle_taxonomy_archive_wp_title($title, $sep, $seplocation) {
 		if (is_main_query() && is_tax() && is_archive()) {
 			$obj = get_queried_object();
@@ -640,7 +637,7 @@ jQuery(document).ready(function($) {
 		$wp_query->set('paged', self::$_stored_paged);
 		remove_action('template_redirect', 'cf_taxonomy_post_type_binding::readd_paged_var', 1000);
 	}
-
+	
 	public static function handle_taxonomy_archive_first_page_link($link_text) {
 		if (empty($link_text)) {
 			$link_text = remove_query_arg('paged', $_SERVER['REQUEST_URI']);
@@ -649,9 +646,9 @@ jQuery(document).ready(function($) {
 	}
 }
 
-add_action('init', 'cf_taxonomy_post_type_binding::init', 99);
 add_filter('cffim_item_thumbnail', 'cf_taxonomy_post_type_binding::cffim_item_thumbnail', 10, 3);
 add_filter('post_type_link', 'cf_taxonomy_post_type_binding::post_link', 10, 2);
+add_action('wp_loaded', 'cf_taxonomy_post_type_binding::on_wp_loaded');
 add_action('admin_head', 'cf_taxonomy_post_type_binding::on_admin_head');
 add_action('admin_head-post.php', 'cf_taxonomy_post_type_binding::on_admin_head_post');
 add_action('admin_head-edit.php', 'cf_taxonomy_post_type_binding::on_admin_head_edit');
