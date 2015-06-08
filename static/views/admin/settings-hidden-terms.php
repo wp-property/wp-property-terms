@@ -10,8 +10,8 @@ if( !isset( $property_slug ) ) {
   return;
 }
 
-$taxonomies = $this->get( 'config.taxonomies', array() );
-$hidden = $this->get( 'config.hidden', array() );
+$taxonomies = ud_get_wpp_terms()->get( 'config.taxonomies', array() );
+$hidden = ud_get_wpp_terms()->get( 'config.hidden', array() );
 
 ?>
 <?php foreach( $taxonomies as $k => $data ) : ?>

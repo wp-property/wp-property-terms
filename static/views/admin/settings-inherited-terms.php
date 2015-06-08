@@ -10,8 +10,8 @@ if( !isset( $property_slug ) ) {
   return;
 }
 
-$taxonomies = $this->get( 'config.taxonomies', array() );
-$inheritance = $this->get( 'config.inherited', array() );
+$taxonomies = ud_get_wpp_terms()->get( 'config.taxonomies', array() );
+$inheritance = ud_get_wpp_terms()->get( 'config.inherited', array() );
 
 ?>
 <?php foreach( $taxonomies as $k => $data ) : ?>
