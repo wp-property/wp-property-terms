@@ -38,8 +38,8 @@ namespace UsabilityDynamics\WPP {
           /** Add Settings on Developer Tab */
           add_filter( 'wpp::settings_developer::tabs', function( $tabs ){
             $tabs['terms'] = array(
-              'label' => __( 'Terms', $this->domain ),
-              'template' => $this->path( 'static/views/admin/settings-developer-terms.php', 'dir' ),
+              'label' => __( 'Terms', ud_get_wpp_terms()->domain ),
+              'template' => ud_get_wpp_terms()->path( 'static/views/admin/settings-developer-terms.php', 'dir' ),
               'order' => 25
             );
             return $tabs;
@@ -47,12 +47,12 @@ namespace UsabilityDynamics\WPP {
 
           /** Add Hidden Taxonomies on Types Tab */
           add_action( 'wpp::types::hidden_attributes', function( $property_slug ){
-            include $this->path( 'static/views/admin/settings-hidden-terms.php', 'dir' );
+            include ud_get_wpp_terms()->path( 'static/views/admin/settings-hidden-terms.php', 'dir' );
           } );
 
           /** Add Inherited Taxonomies on Types Tab */
           add_action( 'wpp::types::inherited_attributes', function( $property_slug ){
-            include $this->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
+            include ud_get_wpp_terms()->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
           } );
 
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
