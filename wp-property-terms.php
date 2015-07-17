@@ -5,11 +5,14 @@
  * Description: The Add-on for WP-Property plugin which adds ability to manage custom taxonomies for your properties.
  * Author: Usability Dynamics, Inc.
  * Version: 1.0.0
+ * Requires at least: 4.0
+ * Tested up to: 4.2.2
  * Text Domain: wpp_terms
  * Author URI: http://www.usabilitydynamics.com
  * Domain Path: /static/languages/
  * GitHub Plugin URI: wp-property/wp-property-terms
  * GitHub Branch: v1.0
+ *
  * Copyright 2012 - 2015 Usability Dynamics, Inc.  ( email : info@usabilitydynamics.com )
  *
  */
