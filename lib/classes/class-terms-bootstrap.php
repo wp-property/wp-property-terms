@@ -172,7 +172,7 @@ namespace UsabilityDynamics\WPP {
         $exclude = array();
 
         foreach( $taxonomies as $key => $data ) {
-          if( !$data[ 'rich_taxonomy' ] ) {
+          if( !isset( $data[ 'rich_taxonomy' ] ) || !$data[ 'rich_taxonomy' ] ) {
             array_push( $exclude, $key );
           }
         }
