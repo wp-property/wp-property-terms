@@ -32,12 +32,14 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
   </tr>
   </thead>
   <tbody>
+  <?php $search_input = apply_filters( 'wpp::terms::search_input_fields', array( 'dropdown' => __( 'Dropdown Selection', ud_get_wpp_terms()->domain ), 'multi_checkbox' => __( 'Multi-Checkbox', ud_get_wpp_terms()->domain ) ) ); ?>
   <?php foreach( (array) ud_get_wpp_terms( 'config.taxonomies', array() ) as $slug => $data ): ?>
     <?php
 
     $data = ud_get_wpp_terms()->prepare_taxonomy( $data, $slug );
     $gslug = ud_get_wpp_terms( "config.groups.{$slug}" );
     $group = ud_get_wp_property( "property_groups.{$gslug}" );
+    $current_search_input = ud_get_wp_property( "searchable_attr_fields.{$slug}", false );
 
     ?>
     <tr class="wpp_dynamic_table_row" slug="<?php echo $slug; ?>" <?php echo( !empty( $gslug ) ? "wpp_attribute_group=\"" . $gslug . "\"" : "" ); ?> style="<?php echo( !empty( $group[ 'color' ] ) ? "background-color:" . $group[ 'color' ] : "" ); ?>" slug="<?php echo $slug; ?>" new_row='false'>
@@ -68,6 +70,16 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
           <li class="wpp_development_advanced_option">
             <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>"/></label>
           </li>
+          <?php if( !empty( $search_input ) && is_array( $search_input ) ) : ?>
+          <li class="wpp_development_advanced_option">
+            <label><?php _e( 'Search Input', ud_get_wpp_terms()->domain ); ?></label>
+              <select name="wpp_settings[searchable_attr_fields][<?php echo $slug; ?>]">
+                <?php foreach( $search_input as $k => $v ) : ?>
+                  <option value="<?php echo $k ?>" <?php echo ( isset( $current_search_input ) && $current_search_input == $k ? 'selected="selected"' : '' ); ?>><?php echo $v; ?></option>
+                <?php endforeach; ?>
+              </select>
+          </li>
+          <?php endif; ?>
 
           <li class="">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][public]" <?php checked( $data['public'], true ); ?> value="true"/> <?php _e( 'Public & Searchable', ud_get_wpp_terms()->domain ); ?></label>

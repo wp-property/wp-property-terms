@@ -648,20 +648,54 @@ namespace UsabilityDynamics\WPP {
 
         /** STEP 3. Extend Property Search form */
 
+        add_filter( 'wpp::show_search_field_with_no_values', function( $bool, $slug ) {
+          $taxonomies = ud_get_wpp_terms( 'config.taxonomies', array() );
+          if( array_key_exists( $slug, $taxonomies ) ) {
+            return true;
+          }
+          return $bool;
+        }, 10, 2 );
+
         /** Take care about Taxonomies fields */
         foreach( $taxonomies as $taxonomy => $data ){
 
           add_filter( 'wpp_search_form_field_' . $taxonomy, function( $html, $taxonomy, $label, $value, $input, $random_id ) {
+
+            $search_input = ud_get_wp_property( "searchable_attr_fields.{$taxonomy}" );
             $terms = get_terms( $taxonomy, array( 'fields' => 'id=>name' ) );
+
             ob_start();
-            ?>
-            <select id="<?php echo $random_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $taxonomy; ?> taxonomy <?php echo $taxonomy; ?>" name="wpp_search[<?php echo $taxonomy; ?>]">
-              <option value="-1"><?php _e( 'Any', ud_get_wpp_terms('domain') ) ?></option>
-              <?php foreach ( $terms as $term_id => $label ) : ?>
-                <option value="<?php echo $term_id; ?>" <?php selected( $value, $term_id ); ?>><?php echo $label; ?></option>
-              <?php endforeach; ?>
-            </select>
-            <?php
+
+            switch( $search_input ) {
+
+              case 'multi_checkbox':
+                ?>
+                <ul class="wpp_multi_checkbox taxonomy <?php echo $taxonomy; ?>">
+                  <?php foreach ( $terms as $term_id => $label ) : ?>
+                    <?php $unique_id = rand( 10000, 99999 ); ?>
+                    <li>
+                      <input name="wpp_search[<?php echo $taxonomy; ?>][]" <?php echo( is_array( $value ) && in_array( $term_id, $value ) ? 'checked="true"' : '' ); ?> id="wpp_attribute_checkbox_<?php echo $unique_id; ?>" type="checkbox" value="<?php echo $term_id; ?>"/>
+                      <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>" class="wpp_search_label_second_level"><?php echo $label; ?></label>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+                <?php
+                break;
+
+              case 'dropdown':
+              default:
+                ?>
+                <select id="<?php echo $random_id; ?>" class="wpp_search_select_field taxonomy <?php echo $taxonomy; ?>" name="wpp_search[<?php echo $taxonomy; ?>]">
+                  <option value="-1"><?php _e( 'Any', ud_get_wpp_terms('domain') ) ?></option>
+                  <?php foreach ( $terms as $term_id => $label ) : ?>
+                    <option value="<?php echo $term_id; ?>" <?php selected( $value, $term_id ); ?>><?php echo $label; ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <?php
+                break;
+
+            }
+
             return ob_get_clean();
 
           }, 10, 6 );
