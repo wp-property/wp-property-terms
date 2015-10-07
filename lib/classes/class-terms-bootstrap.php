@@ -732,6 +732,10 @@ namespace UsabilityDynamics\WPP {
           }
         }
 
+        if( $args[ 'hierarchical' ] ) {
+          $args[ 'rewrite' ][ 'hierarchical' ] = true;
+        }
+
         return $args;
       }
       
