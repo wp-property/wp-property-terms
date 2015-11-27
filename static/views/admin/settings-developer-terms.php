@@ -25,9 +25,9 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
   <tr>
     <th class='wpp_draggable_handle'>&nbsp;</th>
     <th class='wpp_attribute_name_col'><?php _e( 'Label', ud_get_wpp_terms()->domain ) ?></th>
+    <th class='wpp_attribute_name_col'><?php _e( 'Type', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_attribute_group_col'><?php _e( 'Group', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_settings_col'><?php _e( 'Settings', ud_get_wpp_terms()->domain ) ?></th>
-    <th class='wpp_settings_col'><?php _e( 'Type', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_delete_col'>&nbsp;</th>
   </tr>
   </thead>
@@ -59,6 +59,15 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
             <span class="wpp_show_advanced"><?php _e( 'Toggle Advanced Settings', ud_get_wpp_terms()->domain ); ?></span>
           </li>
         </ul>
+      </td>
+
+      <td>
+        <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
+          <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
+            <option value="<?php echo $k ?>" <?php echo selected( $k, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
+          <?php endforeach; ?>
+        </select>
+      </td>
 
       <td class="wpp_attribute_group_col">
         <input type="text" class="wpp_attribute_group wpp_taxonomy_group wpp_group" value="<?php echo( !empty( $group[ 'name' ] ) ? $group[ 'name' ] : "" ); ?>"/>
@@ -105,14 +114,6 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Add Term Post', ud_get_wpp_terms()->domain ); ?></label>
           </li>
         </ul>
-      </td>
-
-      <td>
-        <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
-          <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
-            <option value="<?php echo $k ?>" <?php echo selected( $k, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
-          <?php endforeach; ?>
-        </select>
       </td>
 
       <td>
