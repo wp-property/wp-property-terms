@@ -20,6 +20,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
 
 <p style="margin-top: 0;"><?php printf( __( 'Manage your %s Taxonomies here. Note, you can not remove all taxonomies, in this case default WP-Property taxonomies will be returned back.', ud_get_wpp_terms()->domain ), WPP_F::property_label() ); ?></p>
 
+<p><?php printf(__( 'Taxonomies length limit is 32 character but don’t allow more than 32 characters to be provided as well. You can use "rewrite" field if your auto generated slug is greater than limit.', ud_get_wpp_terms()->domain ));?></p>
 <table id="" class="wpp_sortable wpp_inquiry_attribute_fields ud_ui_dynamic_table widefat">
   <thead>
   <tr>
@@ -47,7 +48,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       <td>
         <ul>
           <li>
-            <input class="slug_setter" type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][label]" value="<?php echo $data['label']; ?>"/>
+            <input class="slug_setter" type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][label]" value="<?php echo $data['label']; ?>" maxlength='32'/>
           </li>
           <li class="wpp_development_advanced_option">
             <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>"/>
@@ -77,7 +78,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       <td>
         <ul>
           <li class="wpp_development_advanced_option">
-            <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>"/></label>
+            <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>" maxlength='32'/></label>
           </li>
           <?php if( !empty( $search_input ) && is_array( $search_input ) ) : ?>
           <li class="wpp_development_advanced_option">

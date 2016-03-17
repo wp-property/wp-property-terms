@@ -401,6 +401,7 @@ namespace UsabilityDynamics\WPP {
           if( !empty($data[ 'wpp_terms' ][ 'taxonomies' ]) && is_array( $data[ 'wpp_terms' ][ 'taxonomies' ] ) ) {
             $taxonomies = array();
             foreach( $data[ 'wpp_terms' ][ 'taxonomies' ] as $taxonomy => $v ) {
+              $taxonomy = substr($taxonomy, 0, 32);
               /* Ignore missed Taxonomy */
               if( empty( $v[ 'label' ] ) && count( $data[ 'wpp_terms' ] ) == 1 ) {
                 break;
