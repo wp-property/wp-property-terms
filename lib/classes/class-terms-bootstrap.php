@@ -56,6 +56,8 @@ namespace UsabilityDynamics\WPP {
           } );
 
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
+          // Add terms settings to backup
+          add_action( 'wpp::backup::data', array( $this, 'backup_settings' ) );
 
         }
 
@@ -433,6 +435,17 @@ namespace UsabilityDynamics\WPP {
 
           $this->settings->commit();
         }
+      }
+
+      /**
+       * Add terms settings to WP-Property backup's data
+       *
+       * @param $data
+       * @since 1.0.3
+       */
+      public function backup_settings( $data ) {
+        $data[ 'wpp_terms' ] = $this->get();
+        return $data;
       }
 
       /**

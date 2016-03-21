@@ -20,7 +20,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
 
 <p style="margin-top: 0;"><?php printf( __( 'Manage your %s Taxonomies here. Note, you can not remove all taxonomies, in this case default WP-Property taxonomies will be returned back.', ud_get_wpp_terms()->domain ), WPP_F::property_label() ); ?></p>
 
-<p><?php printf(__( 'Taxonomies length limit is 32 character but don’t allow more than 32 characters to be provided as well. You can use "rewrite" field if your auto generated slug is greater than limit.', ud_get_wpp_terms()->domain ));?></p>
+<p><?php printf(__( 'Note, taxonomies length limit is 32 characters.', ud_get_wpp_terms()->domain ));?></p>
 <table id="" class="wpp_sortable wpp_inquiry_attribute_fields ud_ui_dynamic_table widefat">
   <thead>
   <tr>
