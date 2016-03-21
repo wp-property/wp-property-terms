@@ -136,6 +136,12 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function maybe_remove_native_meta_boxes() {
+        // Removing nativ metabox if  Show in Admin Menu and add native Meta Box isn't set.
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        foreach ($taxonomies as $taxonomy => $args) {
+          if(!isset($args['show_ui']) || $args['show_ui'] == false)
+            remove_meta_box( "tagsdiv-$taxonomy", 'property', 'side' );
+        }
 
         if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
           $type = get_post_meta( $_REQUEST['post'], 'property_type', true );
@@ -721,6 +727,11 @@ namespace UsabilityDynamics\WPP {
        * Prepare arguments
        */
       public function prepare_taxonomy( $args, $taxonomy ) {
+        // Removing submenu item if  Show in Admin Menu and add native Meta Box isn't set.
+        if(!isset($args['show_ui']) || $args['show_ui'] == false){
+           $args['show_ui'] = true;
+           $args['show_in_menu'] = false;
+        }
 
         $args = wp_parse_args( $args, array(
           'label' => $taxonomy,
