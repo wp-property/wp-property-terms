@@ -69,6 +69,7 @@ namespace UsabilityDynamics\WPP {
 
         /** Prepare taxonomy's arguments before registering taxonomy. */
         add_filter( 'wpp::register_taxonomy', array( $this, 'prepare_taxonomy' ), 99, 2 );
+        add_filter( 'wpp::register_taxonomy', array( $this, 'register_taxonomy' ), 99, 2 );
 
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
@@ -726,12 +727,20 @@ namespace UsabilityDynamics\WPP {
       /**
        * Prepare arguments
        */
-      public function prepare_taxonomy( $args, $taxonomy ) {
-        // Removing submenu item if  Show in Admin Menu and add native Meta Box isn't set.
+      public function register_taxonomy( $args, $taxonomy ) {
+        // Removing submenu item from menu if  Show in Admin Menu and add native Meta Box isn't set.
         if(!isset($args['show_ui']) || $args['show_ui'] == false){
            $args['show_ui'] = true;
            $args['show_in_menu'] = false;
         }
+        return $args;
+      }
+
+
+      /**
+       * Prepare arguments
+       */
+      public function prepare_taxonomy( $args, $taxonomy ) {
 
         $args = wp_parse_args( $args, array(
           'label' => $taxonomy,
