@@ -243,8 +243,16 @@ namespace UsabilityDynamics\WPP {
         }
 
         $taxonomies = $this->get( 'config.taxonomies', array() );
+
+
         if( !empty($taxonomies) && is_array($taxonomies) ) {
           foreach( $taxonomies as $k => $v ) {
+
+            // ignore terms that are not explicitly set as searchable
+            if( !isset( $v['admin_searchable'] ) || !$v['admin_searchable'] ) {
+              continue;
+            }
+
             /* Ignore taxonomy if field with the same name already exists */
             if( in_array( $k, $defined ) ) {
               continue;

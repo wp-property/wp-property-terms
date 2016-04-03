@@ -114,6 +114,11 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
           <li class="wpp_development_advanced_option">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Add Term Post', ud_get_wpp_terms()->domain ); ?></label>
           </li>
+
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][admin_searchable]" <?php checked( $data['admin_searchable'], true ); ?> value="true" class="wpp-terms-option-admin_searchable"/> <?php _e( 'Admin Searchable', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
         </ul>
       </td>
 
