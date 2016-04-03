@@ -31,6 +31,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		{
 			$options = $field['options'];
 			$terms   = get_terms( $options['taxonomy'], $options['args'] );
+			$field['_options']      = $options;
 			$field['options']      = self::get_options( $terms );
 			$field['display_type'] = $options['type'];
 
@@ -50,7 +51,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 					$html .= self::walk_select_tree( $meta, $field, $elements, $options['parent'], true );
 					break;
 				case 'select_advanced':
-					$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field, $options );
+					$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
 					break;
 				case 'select':
 				default:

@@ -28,10 +28,11 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) )
      *
      * @return string
      */
-    static function html( $meta, $field, $options ){
+    static function html( $meta, $field ){
       global $wpp_terms_taxonomy_field_counter;
       $wpp_terms_taxonomy_field_counter++;
       $terms = array();
+      $options = $field['_options'];
       foreach ($field['options'] as $id => $label) {
         $terms[] = array('value' => $id, 'label' => $label);
       }
