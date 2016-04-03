@@ -517,7 +517,7 @@ namespace UsabilityDynamics\WPP {
               $field = array(
                 'name' => $d['label'],
                 'id' => $k,
-                'type' => 'taxonomy',
+                'type' => 'wpp_taxonomy',
                 'multiple' => ( isset( $types[ $k ] ) && $types[ $k ] == 'unique' ? false : true ),
                 'options' => array(
                   'taxonomy' => $k,

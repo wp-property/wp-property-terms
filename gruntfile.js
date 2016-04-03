@@ -50,7 +50,8 @@ module.exports = function build( grunt ) {
         files: {
           'static/styles/wpp.terms.settings.css': [ 'static/styles/src/wpp.terms.settings.less' ],
           'static/styles/wpp.terms.property.css': [ 'static/styles/src/wpp.terms.property.less' ],
-          'static/styles/fields/wpp-taxonomy-inherited.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
+          'static/styles/fields/wpp-taxonomy-inherited.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ],
+          'static/styles/fields/wpp-select-advance.css': [ 'static/styles/src/fields/wpp-select-advance.less' ]
         }
       },
       development: {
@@ -60,7 +61,8 @@ module.exports = function build( grunt ) {
         files: {
           'static/styles/wpp.terms.settings.dev.css': [ 'static/styles/src/wpp.terms.settings.less' ],
           'static/styles/wpp.terms.property.dev.css': [ 'static/styles/src/wpp.terms.property.less' ],
-          'static/styles/fields/wpp-taxonomy-inherited.dev.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ]
+          'static/styles/fields/wpp-taxonomy-inherited.dev.css': [ 'static/styles/src/fields/wpp-taxonomy-inherited.less' ],
+          'static/styles/fields/wpp-select-advance.dev.css': [ 'static/styles/src/fields/wpp-select-advance.less' ]
         }
       }
     },
@@ -79,7 +81,8 @@ module.exports = function build( grunt ) {
       },
       js: {
         files: [
-          'static/scripts/src/*.*'
+          'static/scripts/src/*.*',
+          'static/scripts/src/fields/*.*'
         ],
         tasks: [ 'uglify' ]
       }
@@ -95,7 +98,7 @@ module.exports = function build( grunt ) {
           {
             expand: true,
             cwd: 'static/scripts/src',
-            src: [ '*.js' ],
+            src: [ '*.js', 'fields/*.js' ],
             dest: 'static/scripts'
           }
         ]
@@ -109,7 +112,7 @@ module.exports = function build( grunt ) {
           {
             expand: true,
             cwd: 'static/scripts/src',
-            src: [ '*.js' ],
+            src: [ '*.js', 'fields/*.js' ],
             dest: 'static/scripts'
           }
         ]
