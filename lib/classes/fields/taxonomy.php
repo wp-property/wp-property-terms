@@ -45,10 +45,14 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 					$html .= self::walk_select_tree( $meta, $field, $elements, $options['parent'], true );
 					break;
 				case 'select_advanced':
-					if($field['multiple'] == true)
+					if($field['multiple'] == true){
 						$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
-					else // if it's not  multiple using default select advance field
+					}
+					else{ // if it's not  multiple using default select advance field
+						$terms   = get_terms( $options['taxonomy'], $options['args'] );
+						$field['options'] = self::get_options( $terms );
 						$html = RWMB_Select_Advanced_Field::html( $meta, $field );
+					}
 					break;
 				case 'select':
 				default:
