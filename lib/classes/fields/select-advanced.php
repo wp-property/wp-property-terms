@@ -39,7 +39,11 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) )
       ob_start();
 
       ?>
-      <div class="rwmb-field rwmb-wpp-taxonomy-wrapper" data-name="<?php echo $field['field_name'];?>" data-tax-counter="<?php echo $wpp_terms_taxonomy_field_counter;?>">
+      <div 
+        class="rwmb-field rwmb-wpp-taxonomy-wrapper" 
+        data-name="<?php echo $field['field_name'];?>" 
+        data-taxonomy="<?php echo $options['taxonomy'];?>" 
+        data-tax-counter="<?php echo $wpp_terms_taxonomy_field_counter;?>">
         <div class="taxsdiv">
           <div class="jaxtag">
             <div class="ui-widget clearfix">
@@ -50,22 +54,17 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) )
           </div>
           <div class="tagchecklist">
             <?php
-            $i = 0;
             if(is_array($meta))
               foreach ($meta as $term) {
-                $i++;
-                $term = self::get_term( $term , $terms );
+                $term = get_term( $term , $options['taxonomy'] );
                 echo "<span class='tax-tag'>";
-                  echo "<a id='property_feature-check-num-$i' class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term['label']}";
-                  echo "<input type='hidden' name='{$field['field_name']}' value='{$term['value']}' />";
+                  echo "<a class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term->name}";
+                  echo "<input type='hidden' name='{$field['field_name']}' value='{$term->term_id}' />";
                 echo "</span>";
               }
             ?>
           </div>
         </div>
-        <script>
-          var wpp_terms_available_options_<?php echo $wpp_terms_taxonomy_field_counter;?> = <?php echo json_encode($terms);?>;
-        </script>
       </div>
       <?php if($wpp_terms_taxonomy_field_counter == 1):?>
       <script type="text/html" id="wpp-terms-taxnomy-template">

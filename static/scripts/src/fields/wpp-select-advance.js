@@ -5,42 +5,60 @@ jQuery(document).ready(function($){
         var tagchecklist = $this.find('.tagchecklist');
         var datataxcounter = $this.attr('data-tax-counter');
         var attrName = $this.attr('data-name');
+        var taxonomy = $this.attr('data-taxonomy');
         var btnAdd = $this.find('.taxadd');
         var input  = $this.find('.newtag');
         var template = $('#wpp-terms-taxnomy-template').html();
-        var taxList = window["wpp_terms_available_options_" + datataxcounter];
+        var taxList = {};
 
-        input.autocomplete({
-            minLength: 0,
-            source: taxList,
-            focus: function( event, ui ) {
-                input.val( ui.item.label );
-                return false;
-            },
-            select: function( event, ui ) {
-                input.val( ui.item.label );
-                return false;
-            }
-
-        })
-        .autocomplete( "instance" )._renderItem = function( ul, item ) {
-          var exist = is_already_added(item.value, tagchecklist.children());
-          var selected = exist?'ui-state-selected':'';
-          return $( "<li>" )
-            .append( "<a class='"+selected+"'>" + item.label + "</a>" )
-            .appendTo( ul );
+        var query = {
+            action: 'term_autocomplete',
+            taxonomy: taxonomy,
         };
 
-        input.autocomplete( "widget" ).addClass('wpp-autocomplete');
+        var url = ajaxurl + '?' + jQuery.param(query);
+        input.one('focus', function(){
+            input.addClass('ui-autocomplete-loading');
+            $.ajax(url)
+             .done(function(data){
+                input.removeClass('ui-autocomplete-loading');
+                taxList = data;
+                input.autocomplete({
+                    minLength: 0,
+                    source: data,
+                    focus: function( event, ui ) {
+                        input.val( ui.item.label );
+                        return false;
+                    },
+                    select: function( event, ui ) {
+                        input.val( ui.item.label );
+                        return false;
+                    }
 
-        input.on('focus', function(){
-            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-            if ( wasOpen ) {
-              return;
-            }
- 
-            // Pass empty string as value to search for, displaying all results
-            input.autocomplete( "search", "" );
+                })
+                .autocomplete( "instance" )._renderItem = function( ul, item ) {
+                  var exist = is_already_added(item.value, tagchecklist.children());
+                  var selected = exist?'ui-state-selected':'';
+                  return $( "<li>" )
+                    .append( "<a class='"+selected+"'>" + item.label + "</a>" )
+                    .appendTo( ul );
+                };
+
+                input.autocomplete( "widget" ).addClass('wpp-autocomplete');
+
+                input.on('focus', function(){
+                    wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                    if ( wasOpen ) {
+                      return;
+                    }
+         
+                    // Pass empty string as value to search for, displaying all results
+                    input.autocomplete( "search", "" );
+                });
+
+                if(input.is(':focus'))
+                    input.trigger('focus');
+            }); 
         });
 
         btnAdd.on('click', function(e){

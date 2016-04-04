@@ -31,24 +31,16 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		static function html( $meta, $field )
 		{
 			$options = $field['options'];
-			$terms   = get_terms( $options['taxonomy'], $options['args'] );
-			$field['_options']      = $options;
-			$field['_terms']      	= $terms;
-			$field['options']      = self::get_options( $terms );
 			$field['display_type'] = $options['type'];
+			$field['_options']      = $options;
 
 			$html = '';
 
 			switch ( $options['type'] )
 			{
-				case 'checkbox_list':
-					$html = RWMB_Checkbox_List_Field::html( $meta, $field );
-					break;
-				case 'checkbox_tree':
-					$elements = self::process_terms( $terms );
-					$html .= self::walk_checkbox_tree( $meta, $field, $elements, $options['parent'], true );
-					break;
 				case 'select_tree':
+					$terms   = get_terms( $options['taxonomy'], $options['args'] );
+					$field['options']      = self::get_options( $terms );
 					$elements = self::process_terms( $terms );
 					$html .= self::walk_select_tree( $meta, $field, $elements, $options['parent'], true );
 					break;

@@ -90,6 +90,8 @@ namespace UsabilityDynamics\WPP {
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+
+        add_action( 'wp_ajax_term_autocomplete', array($this, 'ajax_term_autocomplete'));
       }
 
       /**
@@ -781,6 +783,16 @@ namespace UsabilityDynamics\WPP {
       public function deactivate() {
         //** flush Object Cache */
         wp_cache_flush();
+      }
+
+      public function ajax_term_autocomplete(){
+        $terms = get_terms($_REQUEST['taxonomy'], array('fields' => 'id=>name'));
+        $new = array();
+        foreach ($terms as $id => $name) {
+          $new[] = array('value' => $id, 'label' => $name);
+        }
+        wp_send_json($new);
+        die();
       }
 
     }

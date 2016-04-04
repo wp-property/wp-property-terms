@@ -39,6 +39,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.wpp-autocomplete {
+  max-height: 150px;
+  overflow-y: scroll;
+}
 .wpp-autocomplete .ui-menu-item {
   padding: 0px;
 }
