@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
                     return $("<li>").append("<a class='" + selected + "'>" + item.label + "</a>").appendTo(ul);
                 }, input.autocomplete("widget").addClass("wpp-autocomplete"), input.on("focus", function() {
                     wasOpen = input.autocomplete("widget").is(":visible"), wasOpen || input.autocomplete("search", "");
-                }), input.is(":focus") && input.trigger("focus");
+                }), input.is(":focus") && input.autocomplete("search", input.val());
             });
         }), btnAdd.on("click", function(e) {
             var tag = input.val(), taglistChild = tagchecklist.children();

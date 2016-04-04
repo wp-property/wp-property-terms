@@ -57,7 +57,7 @@ jQuery(document).ready(function($){
                 });
 
                 if(input.is(':focus'))
-                    input.trigger('focus');
+                    input.autocomplete( "search", input.val() );
             }); 
         });
 
