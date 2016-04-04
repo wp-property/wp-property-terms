@@ -14,6 +14,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		 */
 		static function admin_enqueue_scripts()
 		{
+			RWMB_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Advanced_Field::admin_enqueue_scripts();
 			wp_enqueue_style( 'rwmb-taxonomy', RWMB_CSS_URL . 'taxonomy.css', array(), RWMB_VER );
 			wp_enqueue_script( 'rwmb-taxonomy', RWMB_JS_URL . 'taxonomy.js', array( 'rwmb-select-advanced' ), RWMB_VER, true );
@@ -32,6 +33,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 			$options = $field['options'];
 			$terms   = get_terms( $options['taxonomy'], $options['args'] );
 			$field['_options']      = $options;
+			$field['_terms']      	= $terms;
 			$field['options']      = self::get_options( $terms );
 			$field['display_type'] = $options['type'];
 
@@ -51,7 +53,10 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 					$html .= self::walk_select_tree( $meta, $field, $elements, $options['parent'], true );
 					break;
 				case 'select_advanced':
-					$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
+					if($field['multiple'] == true)
+						$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
+					else // if it's not  multiple using default select advance field
+						$html = RWMB_Select_Advanced_Field::html( $meta, $field );
 					break;
 				case 'select':
 				default:
@@ -74,15 +79,16 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		static function save( $new, $old, $post_id, $field )
 		{
 			$new = array_unique( (array) $new );
-			if(empty( $new )){
+			if(empty( $new ) || count($new) == 0){
 				$new = null;
 			}
 			else{
 				foreach ($new as $key => $term) {
-					if(!is_numeric($term) ){
+					if(!is_numeric($term) && $term != '' ){
 						if(!$t = term_exists($term, $field['options']['taxonomy']))
 							$t = wp_insert_term( $term, $field['options']['taxonomy']);
-						$new[$key] = $t['term_id'];
+						if(!is_wp_error($t))
+							$new[$key] = $t['term_id'];
 					}
 				}
 			}

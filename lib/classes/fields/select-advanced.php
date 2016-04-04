@@ -54,10 +54,10 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) )
             if(is_array($meta))
               foreach ($meta as $term) {
                 $i++;
-                $term = get_term( $term , $options['taxonomy'] );
+                $term = self::get_term( $term , $terms );
                 echo "<span class='tax-tag'>";
-                  echo "<a id='property_feature-check-num-$i' class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term->name}";
-                  echo "<input type='hidden' name='{$field['field_name']}' value='{$term->term_id}' />";
+                  echo "<a id='property_feature-check-num-$i' class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term['label']}";
+                  echo "<input type='hidden' name='{$field['field_name']}' value='{$term['value']}' />";
                 echo "</span>";
               }
             ?>
@@ -81,6 +81,13 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) )
 
 
       return $html;
+    }
+
+    static function get_term($term, $terms){
+      foreach ($terms as $key => $t) {
+        if($term == $t['value'])
+          return $t;
+      }
     }
 
   }
