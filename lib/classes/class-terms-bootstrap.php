@@ -338,19 +338,37 @@ namespace UsabilityDynamics\WPP {
           $criteria = explode( ',', trim( $criteria ) );
         }
 
-        $tax_query = array(
-          'relation' => 'OR',
-          array(
-            'taxonomy' => $key,
-            'field'    => 'name',
-            'terms'    => $criteria,
-          ),
-          array(
-            'taxonomy' => $key,
-            'field'    => 'slug',
-            'terms'    => $criteria,
-          ),
-        );
+        $is_numeric = true;
+        foreach($criteria as $i => $v) {
+          $criteria[$i] = trim($v);
+          if( !is_numeric($criteria[$i]) ) {
+            $is_numeric = false;
+          }
+        }
+
+        if($is_numeric) {
+          $tax_query = array(
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'term_id',
+                  'terms'    => $criteria,
+              ),
+          );
+        } else {
+          $tax_query = array(
+              'relation' => 'OR',
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'name',
+                  'terms'    => $criteria,
+              ),
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'slug',
+                  'terms'    => $criteria,
+              ),
+          );
+        }
 
         $args = array(
           'post_type' => 'property',
