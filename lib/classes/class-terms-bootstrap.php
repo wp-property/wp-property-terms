@@ -352,7 +352,7 @@ namespace UsabilityDynamics\WPP {
                   'taxonomy' => $key,
                   'field'    => 'term_id',
                   'terms'    => $criteria,
-              ),
+              )
           );
         } else {
           $tax_query = array(
@@ -369,6 +369,8 @@ namespace UsabilityDynamics\WPP {
               ),
           );
         }
+
+        $tax_query = apply_filters( 'wpp_terms_custom_search_tax_query', $tax_query, $key, $criteria, $matching_ids );
 
         $args = array(
           'post_type' => 'property',
