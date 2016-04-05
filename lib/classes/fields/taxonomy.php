@@ -16,6 +16,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		{
 			RWMB_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Advanced_Field::admin_enqueue_scripts();
+			RWMB_Wpp_Select_Combobox_Field::admin_enqueue_scripts();
 			wp_enqueue_style( 'rwmb-taxonomy', RWMB_CSS_URL . 'taxonomy.css', array(), RWMB_VER );
 			wp_enqueue_script( 'rwmb-taxonomy', RWMB_JS_URL . 'taxonomy.js', array( 'rwmb-select-advanced' ), RWMB_VER, true );
 		}
@@ -49,9 +50,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 						$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
 					}
 					else{ // if it's not  multiple using default select advance field
-						$terms   = get_terms( $options['taxonomy'], $options['args'] );
-						$field['options'] = self::get_options( $terms );
-						$html = RWMB_Select_Advanced_Field::html( $meta, $field );
+						$html = RWMB_Wpp_Select_Combobox_Field::html( $meta, $field );
 					}
 					break;
 				case 'select':
