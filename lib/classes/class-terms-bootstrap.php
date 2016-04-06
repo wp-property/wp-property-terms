@@ -806,13 +806,36 @@ namespace UsabilityDynamics\WPP {
       }
 
       public function ajax_term_autocomplete(){
-        $terms = get_terms($_REQUEST['taxonomy'], array('fields' => 'id=>name'));
+        $terms = get_terms($_REQUEST['taxonomy'], array('fields' => 'all', 'hide_empty'=>false));
         $new = array();
-        foreach ($terms as $id => $name) {
-          $new[] = array('value' => $id, 'label' => $name);
+        $return = array();
+
+        // Prepering terms 
+        foreach ($terms as $term) {
+          $new[$term->parent][] = array('value' => $term->term_id, 'label' => $term->name);
         }
-        wp_send_json($new);
+
+        // Making terms as hierarchical by prefix
+        if(count($new)>0){
+          foreach ($new[0] as $term) {
+            $return[] = $term;
+            if(isset($new[$term['value']])){
+              $this->get_childs($term['value'], $new, $return);
+            }
+          }
+        }
+        wp_send_json($return);
         die();
+      }
+
+      public function get_childs($term_id, $terms, &$return, $prefix = "-"){
+        foreach ($terms[$term_id] as $child) {
+          $child['label'] = $prefix . " " . $child['label'];
+          $return[] = $child;
+          if(isset($terms[$child['value']])){
+            $this->get_childs($child['value'], $terms, $return, $prefix . "-");
+          }
+        }
       }
 
     }

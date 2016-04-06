@@ -3,17 +3,14 @@
 defined( 'ABSPATH' ) || exit;
 require_once RWMB_FIELDS_DIR . 'checkbox-list.php';
 
-if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
-{
-	class RWMB_Wpp_Taxonomy_Field extends RWMB_Taxonomy_Field
-	{
+if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
+	class RWMB_Wpp_Taxonomy_Field extends RWMB_Taxonomy_Field{
 		/**
 		 * Enqueue scripts and styles
 		 *
 		 * @return void
 		 */
-		static function admin_enqueue_scripts()
-		{
+		static function admin_enqueue_scripts(){
 			RWMB_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Combobox_Field::admin_enqueue_scripts();
@@ -29,22 +26,15 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		 *
 		 * @return string
 		 */
-		static function html( $meta, $field )
-		{
+		static function html( $meta, $field ){
 			$options = $field['options'];
 			$field['display_type'] = $options['type'];
 			$field['_options']      = $options;
 
 			$html = '';
 
-			switch ( $options['type'] )
-			{
+			switch ( $options['type'] ){
 				case 'select_tree':
-					$terms   = get_terms( $options['taxonomy'], $options['args'] );
-					$field['options']      = self::get_options( $terms );
-					$elements = self::process_terms( $terms );
-					$html .= self::walk_select_tree( $meta, $field, $elements, $options['parent'], true );
-					break;
 				case 'select_advanced':
 					if($field['multiple'] == true){
 						$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
@@ -71,8 +61,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) )
 		 *
 		 * @return string
 		 */
-		static function save( $new, $old, $post_id, $field )
-		{
+		static function save( $new, $old, $post_id, $field ){
 			$new = array_unique( (array) $new );
 			if(empty( $new ) || count($new) == 0){
 				$new = null;
