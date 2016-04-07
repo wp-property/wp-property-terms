@@ -1,7 +1,19 @@
-.wpp-taxonomy-select-combobox,
-.wpp-taxonomy-select-combobox > span {
-  position: relative;
+.wpp-taxonomy-select-combobox .assign-parent {
   display: inline-block;
+  padding: 5px;
+  margin: 5px 0px;
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Likely future */
+}
+.wpp-taxonomy-select-combobox,
+.wpp-taxonomy-select-combobox > div {
+  position: relative;
 }
 .wpp-taxonomy-select-combobox .select-combobox-toggle {
   position: absolute;
@@ -12,12 +24,12 @@
   padding: 0;
   float: left;
 }
-.wpp-taxonomy-select-combobox .ui-autocomplete-input {
+.wpp-taxonomy-select-combobox .wpp-terms-input {
   margin: 0;
   padding: 5px 10px;
   float: left;
 }
-.wpp-taxonomy-select-combobox .ui-autocomplete-input:focus + a {
+.wpp-taxonomy-select-combobox .wpp-terms-input:focus + a {
   border-color: #5b9dd9;
   border-left: 0;
   -webkit-box-shadow: 0 0 2px rgba(30, 140, 190, 0.8);

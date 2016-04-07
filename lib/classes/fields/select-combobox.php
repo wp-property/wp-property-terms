@@ -5,8 +5,7 @@ defined( 'ABSPATH' ) || exit;
 // Make sure "select" field is loaded
 require_once RWMB_FIELDS_DIR . 'select.php';
 
-if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) )
-{
+if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) ){
   class RWMB_Wpp_Select_Combobox_Field extends RWMB_Select_Field{
     /**
      * Enqueue scripts and styles
@@ -27,13 +26,14 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) )
      * @return string
      */
     static function html( $meta, $field ){
-      global $wpp_terms_taxonomy_field_counter;
-      $wpp_terms_taxonomy_field_counter++;
       $terms = array();
       $options = $field['_options'];
+      $field_name = trim($field['field_name'], '[]');
+
       foreach ($field['options'] as $id => $label) {
         $terms[] = array('value' => $id, 'label' => $label);
       }
+
       $meta     = array_values($meta);
       $term_id  = '';
       $term_name  = '';
@@ -41,6 +41,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) )
         $term_id = $meta[0];
         $term = get_term( $term_id , $options['taxonomy'] );
         $term_name = $term->name; 
+        $term_id = "tID_" . $term_id;
       }
 
       ob_start();
@@ -48,21 +49,45 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) )
       ?>
       <div 
         class="rwmb-field wpp-taxonomy-select-combobox wpp_ui" 
-        data-name="<?php echo $field['field_name'];?>" 
-        data-taxonomy="<?php echo $options['taxonomy'];?>" 
-        data-tax-counter="<?php echo $wpp_terms_taxonomy_field_counter;?>">
-        <span>
+        data-taxonomy="<?php echo $options['taxonomy'];?>">
+        <div class="clearfix term">
           <input
               type = "text"
-              class="ui-widget ui-widget-content ui-state-default ui-corner-left ui-autocomplete-input" 
+              class="ui-corner-left wpp-terms-input wpp-terms-term" 
               autocomplete="off"
-              name="<?php echo $field['field_name'];?>" 
-              value="<?php echo $term->name;?>"
+              value="<?php echo $term_name?>"
             >
-          <a tabindex="-1" title="Show All Items" class="ui-button ui-widget ui-state-default ui-button-icon-only select-combobox-toggle ui-corner-right" role="button">
+          <input
+              type = "hidden"
+              class="wpp-terms-id-input" 
+              name="<?php echo $field_name;?>[0][term]" 
+              value="<?php echo $term_id?>"
+            >
+          <a tabindex="-1" title="Show All Items" class="ui-widget ui-state-default ui-button-icon-only select-combobox-toggle ui-corner-right" role="button">
             <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-s"></span>
           </a>
-        </span>
+        </div>
+
+        <?php if($options['type'] == 'select_tree'):?>
+        <a tabindex="-1" class="assign-parent button-link" data-toggle="Unassign Parent">Assign Parent</a>
+        <div class="clearfix term-parent hidden">
+          <input
+              type = "text"
+              class="ui-corner-left wpp-terms-input wpp-terms-parent"
+              autocomplete="off"
+              placeholder="Parent"
+            >
+          <input
+              type = "hidden"
+              class="wpp-terms-id-input"
+              name="<?php echo $field_name;?>[0][parent]" 
+            >
+          <a tabindex="-1" title="Show All Items" class="ui-widget ui-state-default ui-button-icon-only select-combobox-toggle ui-corner-right" role="button">
+            <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-s"></span>
+          </a>
+        </div>
+        <?php endif;?>
+
       </div>
       <?php
 

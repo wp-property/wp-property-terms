@@ -7,7 +7,7 @@ jQuery(document).ready(function($){
         var attrName = $this.attr('data-name');
         var taxonomy = $this.attr('data-taxonomy');
         var btnAdd = $this.find('.taxadd');
-        var input  = $this.find('.newtag');
+        var input_terms  = $this.find('.wpp-terms-input');
         var template = $('#wpp-terms-taxnomy-template').html();
         var taxList = {};
 
@@ -17,88 +17,111 @@ jQuery(document).ready(function($){
         };
 
         var url = ajaxurl + '?' + jQuery.param(query);
-        input.one('focus', function(){
-            input.addClass('ui-autocomplete-loading');
-            $.ajax(url)
-             .done(function(data){
-                input.removeClass('ui-autocomplete-loading');
-                taxList = data;
-                input.autocomplete({
-                    minLength: 0,
-                    source: data,
-                    focus: function( event, ui ) {
-                        input.val( ui.item.label );
-                        return false;
-                    },
-                    select: function( event, ui ) {
-                        input.val( ui.item.label );
-                        return false;
-                    }
+        input_terms.each(function(){
+            var input = $(this);
+            input.one('focus', function(){
+                if(input.hasClass('ui-autocomplete-loading') || input.hasClass('ui-autocomplete-input'))
+                    return;
+                input_terms.addClass('ui-autocomplete-loading');
+                $.ajax(url)
+                 .done(function(data){
+                    input_terms.removeClass('ui-autocomplete-loading');
+                    taxList = data;
+                    input_terms.autocomplete({
+                        minLength: 0,
+                        source: data,
+                        focus: function( event, ui ) {
+                            var input = $(this);
+                            input.val( ui.item.label );
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            var input = $(this);
+                            input.val( ui.item.label );
+                            return false;
+                        }
 
-                })
-                .autocomplete( "instance" )._renderItem = function( ul, item ) {
-                  var exist = is_already_added(item.value, tagchecklist.children());
-                  var selected = exist?'ui-state-selected':'';
-                  return $( "<li>" )
-                    .append( "<a class='"+selected+"'>" + item.label + "</a>" )
-                    .appendTo( ul );
-                };
+                    })
+                    input_terms.each(function(){
+                        var input = $(this);
+                        input.autocomplete( "instance" )._renderItem = function( ul, item ) {
+                          var exist = is_already_added(item.value, tagchecklist.children());
+                          var selected = exist?'ui-state-selected':'';
+                          return $( "<li>" )
+                            .append( "<a class='"+selected+"'>" + item.label + "</a>" )
+                            .appendTo( ul );
+                        };
+                        input.autocomplete( "widget" ).addClass('wpp-autocomplete');
+                    });
 
-                input.autocomplete( "widget" ).addClass('wpp-autocomplete');
 
-                input.on('focus', function(){
-                    wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-                    if ( wasOpen ) {
-                      return;
-                    }
-         
-                    // Pass empty string as value to search for, displaying all results
-                    input.autocomplete( "search", "" );
-                });
+                    input_terms.on('focus', function(){
+                        var input = $(this);
+                        wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                        if ( wasOpen ) {
+                          return;
+                        }
+             
+                        // Pass empty string as value to search for, displaying all results
+                        input.autocomplete( "search", "" );
+                    });
 
-                if(input.is(':focus'))
-                    input.autocomplete( "search", input.val() );
-            }); 
+                    if(input.is(':focus'))
+                        input.autocomplete( "search", "" );
+                }); 
+            });
         });
 
         btnAdd.on('click', function(e){
-            var tag = input.val();
+            var input_term = $(this).siblings('.wpp-terms-term');
+            var input_parent = $(this).siblings('.wpp-terms-parent');
+            var parent = input_parent.val();
+            var tag = input_term.val();
             var taglistChild = tagchecklist.children();
             if(tag == ''){
-                input.focus();
+                input_term.focus();
                 return;
             }
             tag = tag.split(",");
+
+            // parent searching if it's available in tax list, if then use tax id.
+            $.each(taxList, function(i, tax){
+                if(parent == tax.label){
+                    parent = 'tID_' + tax.value;
+                    return false;
+                }
+            });
 
             $.each(tag, function(index, item){
                 var item = item.trim();
                 var label = item;
                 var exist = false;
 
-                // serching if it's available in taxlist, if then use tax id.
+                // searching if it's available in taxlist, if then use tax id.
                 $.each(taxList, function(i, tax){
                     if(item == tax.label){
-                        item = tax.value;
+                        item = 'tID_' + tax.value;
                         label = tax.label;
                         return false;
                     }
                 });
 
+                input_name = attrName + "[" + tagchecklist.children().length  + "]";
                 // If already added
                 exist = is_already_added(item, taglistChild);
 
                 if(exist != true){
-                    var tmpl = _.template( template, {label: label, val: item, name: attrName});
+                    var tmpl = _.template( template, {label: label, term: item, name: input_name, parent: parent});
                     tagchecklist.append(tmpl);
                 }
             });
             
-            input.val('');
+            input_terms.val('');
             
         });
 
         // Hook for enter key.
-        input.keypress(function(e){
+        input_terms.keypress(function(e){
             if ( e.which == 13 ){
                 btnAdd.trigger('click');
                 e.preventDefault();
@@ -106,12 +129,19 @@ jQuery(document).ready(function($){
             }
         });
 
-        // Remove tag button.
-        tagchecklist.on('click', '.ntdelbutton', function(){
-            $(this).parent().remove();
-        });
 
     });
+    $(document).on('click', '.assign-parent', function(){
+        var parent = $(this).siblings('.wpp-terms-parent').toggle();
+        if(parent.is(":hidden"))
+            parent.val('');
+
+    });
+    // Remove tag button.
+    $(document).on('click', '.rwmb-wpp-taxonomy-wrapper .tagchecklist .ntdelbutton', function(){
+        $(this).parent().remove();
+    });
+
     var is_already_added = function(value, tagList){
         exist = false;
         $.each(tagList, function(i, tag){

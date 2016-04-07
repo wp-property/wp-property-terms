@@ -1,7 +1,15 @@
 .wpp-taxonomy-select-combobox{
-	&, >span{
+	.assign-parent{
+		display:inline-block;
+		padding:5px;
+		margin:5px 0px;
+		-webkit-user-select: none;  /* Chrome all / Safari all */
+		   -moz-user-select: none;     /* Firefox all */
+		    -ms-user-select: none;      /* IE 10+ */
+		        user-select: none;          /* Likely future */
+	}
+	&, >div{
 		position: relative;
-		display: inline-block;
 	}
 	.select-combobox-toggle {
 		position: absolute;
@@ -12,7 +20,7 @@
 		padding: 0;
 		float: left;
 	}
-	.ui-autocomplete-input {
+	.wpp-terms-input {
 		margin: 0;
 		padding: 5px 10px;
 		float: left;

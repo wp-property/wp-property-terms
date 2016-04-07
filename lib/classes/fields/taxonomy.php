@@ -14,8 +14,6 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 			RWMB_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Advanced_Field::admin_enqueue_scripts();
 			RWMB_Wpp_Select_Combobox_Field::admin_enqueue_scripts();
-			wp_enqueue_style( 'rwmb-taxonomy', RWMB_CSS_URL . 'taxonomy.css', array(), RWMB_VER );
-			wp_enqueue_script( 'rwmb-taxonomy', RWMB_JS_URL . 'taxonomy.js', array( 'rwmb-select-advanced' ), RWMB_VER, true );
 		}
 
 		/**
@@ -62,22 +60,48 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 		 * @return string
 		 */
 		static function save( $new, $old, $post_id, $field ){
-			$new = array_unique( (array) $new );
+			$term_ids = array();
 			if(empty( $new ) || count($new) == 0){
 				$new = null;
 			}
 			else{
 				foreach ($new as $key => $term) {
-					if(!is_numeric($term) && $term != '' ){
-						if(!$t = term_exists($term, $field['options']['taxonomy']))
-							$t = wp_insert_term( $term, $field['options']['taxonomy']);
-						if(!is_wp_error($t))
-							$new[$key] = $t['term_id'];
+					$name		= $term['term'];
+					if(!$name)
+						continue;
+					$parent 	= (isset($term['parent']) && $term['parent'])?$term['parent']:0;
+
+					// It's id so remove prefix and use id.
+					if(strpos($parent, 'tID_') !== false){
+						$id 	= intval(str_replace('tID_', '', $parent));
+						$p	= array('term_id'=>$id);
 					}
+					// Doing another check before insert.
+					else if($parent && !($p = term_exists($parent, $field['options']['taxonomy']))){
+						// Inserting new new term.
+						$p = wp_insert_term( $parent, $field['options']['taxonomy']);
+					}
+					else{
+						$p = array('term_id'=> 0);
+					}
+					// It's id so remove prefix and use id.
+					if(strpos($name, 'tID_') !== false){
+						$id 	= intval(str_replace('tID_', '', $name));
+						$t		= array('term_id'=>$id);
+					}
+					// Doing another check before insert.
+					else if(!$t = term_exists($name, $field['options']['taxonomy'])){
+						// Inserting new new term.
+						$t 		= wp_insert_term( $name, $field['options']['taxonomy'], array('parent'=>$p['term_id']));
+					}
+
+					if(!is_wp_error($t))
+						$term_ids[] = $t['term_id'];
 				}
 			}
-			$new = array_unique( array_map( 'intval', (array) $new ) );
-			wp_set_object_terms( $post_id, $new, $field['options']['taxonomy'] );
+
+			$term_ids = array_map( 'intval', $term_ids );
+			wp_set_object_terms( $post_id, $term_ids, $field['options']['taxonomy'] );
 		}
 	}
 }

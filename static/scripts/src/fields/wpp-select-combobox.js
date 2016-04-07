@@ -3,8 +3,9 @@ jQuery(document).ready(function($){
     wraper.each(function(){
         var $this = $(this);
         var taxonomy = $this.attr('data-taxonomy');
-        var input = $this.find('.ui-autocomplete-input');
+        var input_terms = $this.find('.wpp-terms-input');
         var btntoggle  = $this.find('.select-combobox-toggle');
+        var taxList = {};
 
         var query = {
             action: 'term_autocomplete',
@@ -12,52 +13,84 @@ jQuery(document).ready(function($){
         };
 
         var url = ajaxurl + '?' + jQuery.param(query);
-        input.one('focus', function(){
-            input.addClass('ui-autocomplete-loading');
-            $.ajax(url)
-             .done(function(data){
-                input.removeClass('ui-autocomplete-loading');
-                input.autocomplete({
-                    minLength: 0,
-                    source: data,
-                    focus: function( event, ui ) {
-                        input.val( ui.item.label );
-                        return false;
-                    },
-                    select: function( event, ui ) {
-                        input.val( ui.item.label );
-                        return false;
-                    }
+        input_terms.each(function(){
+            var input = $(this);
+            input.one('focus', function(){
+                if(input.hasClass('ui-autocomplete-loading') || input.hasClass('ui-autocomplete-input'))
+                    return;
+                input_terms.addClass('ui-autocomplete-loading');
+                $.ajax(url)
+                 .done(function(data){
+                    taxList = data;
+                    input_terms.removeClass('ui-autocomplete-loading');
+                    input_terms.autocomplete({
+                        minLength: 0,
+                        source: data,
+                        focus: function( event, ui ) {
+                            var input = $(this);
+                            input.val( ui.item.label );
+                            onInputChange.apply(input);
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            var input = $(this);
+                            input.val( ui.item.label );
+                            onInputChange.apply(input);
+                            return false;
+                        }
 
-                })
-                .autocomplete( "instance" )._renderItem = function( ul, item ) {
-                  var exist = (item.label == input.val());
-                  var selected = exist?'ui-state-selected':'';
-                  return $( "<li>" )
-                    .append( "<a class='"+selected+"'>" + item.label + "</a>" )
-                    .appendTo( ul );
-                };
+                    })
+                    input_terms.each(function(){
+                        var input = $(this);
+                        input.autocomplete( "instance" )._renderItem = function( ul, item ) {
+                          var exist = (item.label == input.val());
+                          var selected = exist?'ui-state-selected':'';
+                          return $( "<li>" )
+                            .append( "<a class='"+selected+"'>" + item.label + "</a>" )
+                            .appendTo( ul );
+                        };
+                        input.autocomplete( "widget" ).addClass('wpp-autocomplete');
+                    });
 
-                input.autocomplete( "widget" ).addClass('wpp-autocomplete');
 
-                input.on('focus', function(){
-                    wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-                    if ( wasOpen ) {
-                      return;
-                    }
-         
-                    // Pass empty string as value to search for, displaying all results
-                    input.autocomplete( "search", input.val() );
-                });
-                input.attr('data-autocomplete-loaded', true);
-                if(input.is(':focus'))
-                    input.autocomplete( "search", '');
-            }); 
+                    input_terms.on('focus', function(){
+                        var input = $(this);
+                        wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                        if ( wasOpen ) {
+                          return;
+                        }
+             
+                        // Pass empty string as value to search for, displaying all results
+                        input.autocomplete( "search", input.val() );
+                    });
+                    if(input.is(':focus'))
+                        input.autocomplete( "search", '');
+                }); 
+
+            });
         });
+
+        input_terms.on('keyup change input', function(){
+            onInputChange.call(this);
+        });
+
+        var onInputChange = function(e){
+            $input = $(this);
+            var value = $input.val();
+            $term_input = $input.siblings('.wpp-terms-id-input');
+            $.each(taxList, function(i, tax){
+                if(tax.label == $input.val()){
+                    value = 'tID_' + tax.value;
+                    return false;
+                }
+            });
+            $term_input.val(value);
+        };
+
         var wasOpen;
         btntoggle.on('click', function(e){
-            console.log(input.attr('data-autocomplete-loaded'));
-            if(!input.attr('data-autocomplete-loaded'))
+            var input = $(this).siblings('input.wpp-terms-input');
+            if(!input.hasClass('ui-autocomplete-input'))
                 return input.focus();
             if ( wasOpen ) {
                 btntoggle.blur();
@@ -67,9 +100,18 @@ jQuery(document).ready(function($){
             input.autocomplete( "search", '');
         })
         .mousedown(function() {
-            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+            var input = $(this).siblings('input.wpp-terms-input');
+            if(input.hasClass('ui-autocomplete-input'))
+                wasOpen = input.autocomplete( "widget" ).is( ":visible" );
         });
+
+        $this.find('.term-parent').hide();     
 
     });
 
+    $(document).on('click', '.assign-parent', function(){
+        var parent = $(this).siblings('.term-parent').toggle();
+        if(parent.is(":hidden"))
+            parent.val('');
+    });
 });
