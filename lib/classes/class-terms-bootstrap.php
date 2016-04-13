@@ -695,7 +695,13 @@ namespace UsabilityDynamics\WPP {
           add_filter( 'wpp_search_form_field_' . $taxonomy, function( $html, $taxonomy, $label, $value, $input, $random_id ) {
 
             $search_input = ud_get_wp_property( "searchable_attr_fields.{$taxonomy}" );
-            $terms = get_terms( $taxonomy, array( 'fields' => 'id=>name' ) );
+            $terms = get_terms( $taxonomy, array( 'fields' => 'all' ) );
+            $_terms = $this->prepare_terms_hierarchicaly($terms);
+
+            $terms = array(); // Clearing $terms variable;
+            foreach ($_terms as $t) {
+              $terms[$t['term_id']] = $t['name'];
+            }
 
             ob_start();
 
@@ -807,33 +813,53 @@ namespace UsabilityDynamics\WPP {
 
       public function ajax_term_autocomplete(){
         $terms = get_terms($_REQUEST['taxonomy'], array('fields' => 'all', 'hide_empty'=>false));
-        $new = array();
-        $return = array();
+        $return = $this->prepare_terms_hierarchicaly($terms);
 
-        // Prepering terms 
-        foreach ($terms as $term) {
-          $new[$term->parent][] = array('value' => $term->term_id, 'label' => $term->name);
-        }
-
-        // Making terms as hierarchical by prefix
-        if(count($new)>0){
-          foreach ($new[0] as $term) {
-            $return[] = $term;
-            if(isset($new[$term['value']])){
-              $this->get_childs($term['value'], $new, $return);
-            }
-          }
-        }
+        // Converting keys from term_id to value and name to label
+        $return = array_map(function($t){
+          return array('value' => $t['term_id'], 'label' => $t['name']);
+        }, $return);
         wp_send_json($return);
         die();
       }
 
+      /**
+       *
+       * prepare_terms_hierarchicaly 
+       *
+       * @param $terms
+       *
+       * @return array
+       */
+
+      public function prepare_terms_hierarchicaly($terms){
+        $_terms = array();
+        $return = array();
+
+        if(count($terms) == 0)
+          return $return;
+
+        // Prepering terms 
+        foreach ($terms as $term) {
+          $_terms[$term->parent][] = array('term_id' => $term->term_id, 'name' => $term->name);
+        }
+
+        // Making terms as hierarchical by prefix
+        foreach ($_terms[0] as $term) { // $_terms[0] is parent or parentless terms
+          $return[] = $term;
+          $this->get_childs($term['term_id'], $_terms, $return);
+        }
+
+        return $return;
+      }
+
+      // Helper function for prepare_terms_hierarchicaly
       public function get_childs($term_id, $terms, &$return, $prefix = "-"){
-        foreach ($terms[$term_id] as $child) {
-          $child['label'] = $prefix . " " . $child['label'];
-          $return[] = $child;
-          if(isset($terms[$child['value']])){
-            $this->get_childs($child['value'], $terms, $return, $prefix . "-");
+        if(isset($terms[$term_id])){
+          foreach ($terms[$term_id] as $child) {
+            $child['name'] = $prefix . " " . $child['name'];
+            $return[] = $child;
+            $this->get_childs($child['term_id'], $terms, $return, $prefix . "-");
           }
         }
       }
