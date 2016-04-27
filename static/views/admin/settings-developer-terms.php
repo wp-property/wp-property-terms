@@ -108,7 +108,11 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
           </li>
 
           <li class="wpp_development_advanced_option">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Admin Menu and add native Meta Box', ud_get_wpp_terms()->domain ); ?></label>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_in_menu]" <?php checked( $data['show_in_menu'], true ); ?> value="true"/> <?php _e( 'Show in Admin Menu', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][add_native_mtbox]" <?php checked( $data['add_native_mtbox'], true ); ?> value="true"/> <?php _e( 'Add native Meta Box', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
           <li class="wpp_development_advanced_option">

@@ -142,7 +142,7 @@ namespace UsabilityDynamics\WPP {
         // Removing nativ metabox if  Show in Admin Menu and add native Meta Box isn't set.
         $taxonomies = $this->get( 'config.taxonomies', array() );
         foreach ($taxonomies as $taxonomy => $args) {
-          if(!isset($args['show_ui']) || $args['show_ui'] == false)
+          if(!isset($args['add_native_mtbox']) || $args['add_native_mtbox'] == false)
             remove_meta_box( "tagsdiv-$taxonomy", 'property', 'side' );
         }
 
@@ -522,8 +522,8 @@ namespace UsabilityDynamics\WPP {
               break;
 
             default:
-              /** Do no add taxonomy field if native meta box is being used for it. */
-              if( $d[ 'show_ui' ] ) {
+              /** Do not add taxonomy field if native meta box is being used for it. */
+              if( isset($d[ 'add_native_mtbox' ]) && $d[ 'add_native_mtbox' ] ) {
                 break;
               }
               $field = array(
@@ -743,13 +743,15 @@ namespace UsabilityDynamics\WPP {
       }
 
       /**
-       * Prepare arguments
+       * Prepare arguments only for registering taxonomies
        */
       public function register_taxonomy( $args, $taxonomy ) {
-        // Removing submenu item from menu if  Show in Admin Menu and add native Meta Box isn't set.
-        if(!isset($args['show_ui']) || $args['show_ui'] == false){
-           $args['show_ui'] = true;
-           $args['show_in_menu'] = false;
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        // Enabling UI unless terms will not be accessible.
+        $args['show_ui'] = true;
+        // Enabling show_in_menu
+        if(isset($taxonomies[$taxonomy]['show_in_menu']) && $taxonomies[$taxonomy]['show_in_menu']){
+          $args['show_in_menu'] = true;
         }
         return $args;
       }
@@ -765,8 +767,10 @@ namespace UsabilityDynamics\WPP {
           'labels' => array(),
           'public' => false,
           'hierarchical' => false,
-          'show_ui' => false,
+          'show_in_menu' => false,
+          'add_native_mtbox' => false,
           'show_in_nav_menus' => false,
+          'admin_searchable' => false,
           'show_tagcloud' => false,
           'rich_taxonomy' => false,
           'capabilities' => array(
@@ -862,6 +866,15 @@ namespace UsabilityDynamics\WPP {
             $this->get_childs($child['term_id'], $terms, $return, $prefix . "-");
           }
         }
+      }
+
+
+      /**
+       * Run Upgrade Process.
+       *
+       */
+      public function run_upgrade_process() {
+        Terms_Upgrade::run( $this->old_version, $this->args['version'] );
       }
 
     }

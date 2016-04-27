@@ -78,6 +78,7 @@ return array(
     'UsabilityDynamics\\Utility' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-utility.php',
     'UsabilityDynamics\\Utility\\Guid_Fix' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-guid-fix.php',
     'UsabilityDynamics\\WPP\\Terms_Bootstrap' => $baseDir . '/lib/classes/class-terms-bootstrap.php',
+    'UsabilityDynamics\\WPP\\Terms_Upgrade' => $baseDir . '/lib/classes/class-terms-upgrade.php',
     'UsabilityDynamics\\WP\\Bootstrap' => $vendorDir . '/usabilitydynamics/lib-wp-bootstrap/lib/classes/class-bootstrap.php',
     'UsabilityDynamics\\WP\\Bootstrap_Plugin' => $vendorDir . '/usabilitydynamics/lib-wp-bootstrap/lib/classes/class-bootstrap-plugin.php',
     'UsabilityDynamics\\WP\\Bootstrap_Theme' => $vendorDir . '/usabilitydynamics/lib-wp-bootstrap/lib/classes/class-bootstrap-theme.php',
