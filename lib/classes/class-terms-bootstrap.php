@@ -54,7 +54,7 @@ namespace UsabilityDynamics\WPP {
           add_action( 'wpp::types::inherited_attributes', function( $property_slug ){
             include ud_get_wpp_terms()->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
           } );
-
+          // Priority must be greater than 1 for save_settings to make tax post binding work.
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
           // Add terms settings to backup
           add_action( 'wpp::backup::data', array( $this, 'backup_settings' ) );
