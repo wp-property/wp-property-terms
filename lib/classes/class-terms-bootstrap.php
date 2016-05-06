@@ -54,7 +54,7 @@ namespace UsabilityDynamics\WPP {
           add_action( 'wpp::types::inherited_attributes', function( $property_slug ){
             include ud_get_wpp_terms()->path( 'static/views/admin/settings-inherited-terms.php', 'dir' );
           } );
-
+          // Priority must be greater than 1 for save_settings to make tax post binding work.
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
           // Add terms settings to backup
           add_filter( 'wpp::backup::data', array( $this, 'backup_settings' ) );
@@ -69,6 +69,7 @@ namespace UsabilityDynamics\WPP {
 
         /** Prepare taxonomy's arguments before registering taxonomy. */
         add_filter( 'wpp::register_taxonomy', array( $this, 'prepare_taxonomy' ), 99, 2 );
+        add_filter( 'wpp::register_taxonomy', array( $this, 'register_taxonomy' ), 99, 2 );
 
         /** Add Meta Box to manage taxonomies on Edit Property page. */
         add_filter( 'wpp::meta_boxes', array( $this, 'add_meta_box' ), 99 );
@@ -89,6 +90,8 @@ namespace UsabilityDynamics\WPP {
         add_action( 'wpp::clone_property::action', array( $this, 'clone_property_action' ), 99, 2 );
 
         add_action( 'admin_menu' , array( $this, 'maybe_remove_native_meta_boxes' ), 11 );
+
+        add_action( 'wp_ajax_term_autocomplete', array($this, 'ajax_term_autocomplete'));
       }
 
       /**
@@ -136,6 +139,12 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function maybe_remove_native_meta_boxes() {
+        // Removing nativ metabox if  Show in Admin Menu and add native Meta Box isn't set.
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        foreach ($taxonomies as $taxonomy => $args) {
+          if(!isset($args['add_native_mtbox']) || $args['add_native_mtbox'] == false)
+            remove_meta_box( "tagsdiv-$taxonomy", 'property', 'side' );
+        }
 
         if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
           $type = get_post_meta( $_REQUEST['post'], 'property_type', true );
@@ -236,8 +245,16 @@ namespace UsabilityDynamics\WPP {
         }
 
         $taxonomies = $this->get( 'config.taxonomies', array() );
+
+
         if( !empty($taxonomies) && is_array($taxonomies) ) {
           foreach( $taxonomies as $k => $v ) {
+
+            // ignore terms that are not explicitly set as searchable
+            if( !isset( $v['admin_searchable'] ) || !$v['admin_searchable'] ) {
+              continue;
+            }
+
             /* Ignore taxonomy if field with the same name already exists */
             if( in_array( $k, $defined ) ) {
               continue;
@@ -331,27 +348,29 @@ namespace UsabilityDynamics\WPP {
 
         if($is_numeric) {
           $tax_query = array(
-            array(
-              'taxonomy' => $key,
-              'field'    => 'term_id',
-              'terms'    => $criteria,
-            ),
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'term_id',
+                  'terms'    => $criteria,
+              )
           );
         } else {
           $tax_query = array(
-            'relation' => 'OR',
-            array(
-              'taxonomy' => $key,
-              'field'    => 'name',
-              'terms'    => $criteria,
-            ),
-            array(
-              'taxonomy' => $key,
-              'field'    => 'slug',
-              'terms'    => $criteria,
-            ),
+              'relation' => 'OR',
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'name',
+                  'terms'    => $criteria,
+              ),
+              array(
+                  'taxonomy' => $key,
+                  'field'    => 'slug',
+                  'terms'    => $criteria,
+              ),
           );
         }
+
+        $tax_query = apply_filters( 'wpp_terms_custom_search_tax_query', $tax_query, $key, $criteria, $matching_ids );
 
         $args = array(
           'post_type' => 'property',
@@ -503,14 +522,14 @@ namespace UsabilityDynamics\WPP {
               break;
 
             default:
-              /** Do no add taxonomy field if native meta box is being used for it. */
-              if( $d[ 'show_ui' ] ) {
+              /** Do not add taxonomy field if native meta box is being used for it. */
+              if( isset($d[ 'add_native_mtbox' ]) && $d[ 'add_native_mtbox' ] ) {
                 break;
               }
               $field = array(
                 'name' => $d['label'],
                 'id' => $k,
-                'type' => 'taxonomy',
+                'type' => 'wpp_taxonomy',
                 'multiple' => ( isset( $types[ $k ] ) && $types[ $k ] == 'unique' ? false : true ),
                 'options' => array(
                   'taxonomy' => $k,
@@ -676,7 +695,13 @@ namespace UsabilityDynamics\WPP {
           add_filter( 'wpp_search_form_field_' . $taxonomy, function( $html, $taxonomy, $label, $value, $input, $random_id ) {
 
             $search_input = ud_get_wp_property( "searchable_attr_fields.{$taxonomy}" );
-            $terms = get_terms( $taxonomy, array( 'fields' => 'id=>name' ) );
+            $terms = get_terms( $taxonomy, array( 'fields' => 'all' ) );
+            $_terms = $this->prepare_terms_hierarchicaly($terms);
+
+            $terms = array(); // Clearing $terms variable;
+            foreach ($_terms as $t) {
+              $terms[$t['term_id']] = $t['name'];
+            }
 
             ob_start();
 
@@ -718,6 +743,21 @@ namespace UsabilityDynamics\WPP {
       }
 
       /**
+       * Prepare arguments only for registering taxonomies
+       */
+      public function register_taxonomy( $args, $taxonomy ) {
+        $taxonomies = $this->get( 'config.taxonomies', array() );
+        // Enabling UI unless terms will not be accessible.
+        $args['show_ui'] = true;
+        // Enabling show_in_menu
+        if(isset($taxonomies[$taxonomy]['show_in_menu']) && $taxonomies[$taxonomy]['show_in_menu']){
+          $args['show_in_menu'] = true;
+        }
+        return $args;
+      }
+
+
+      /**
        * Prepare arguments
        */
       public function prepare_taxonomy( $args, $taxonomy ) {
@@ -727,8 +767,10 @@ namespace UsabilityDynamics\WPP {
           'labels' => array(),
           'public' => false,
           'hierarchical' => false,
-          'show_ui' => false,
+          'show_in_menu' => false,
+          'add_native_mtbox' => false,
           'show_in_nav_menus' => false,
+          'admin_searchable' => false,
           'show_tagcloud' => false,
           'rich_taxonomy' => false,
           'capabilities' => array(
@@ -771,6 +813,68 @@ namespace UsabilityDynamics\WPP {
       public function deactivate() {
         //** flush Object Cache */
         wp_cache_flush();
+      }
+
+      public function ajax_term_autocomplete(){
+        $terms = get_terms($_REQUEST['taxonomy'], array('fields' => 'all', 'hide_empty'=>false));
+        $return = $this->prepare_terms_hierarchicaly($terms);
+
+        // Converting keys from term_id to value and name to label
+        $return = array_map(function($t){
+          return array('value' => $t['term_id'], 'label' => $t['name']);
+        }, $return);
+        wp_send_json($return);
+        die();
+      }
+
+      /**
+       *
+       * prepare_terms_hierarchicaly 
+       *
+       * @param $terms
+       *
+       * @return array
+       */
+
+      public function prepare_terms_hierarchicaly($terms){
+        $_terms = array();
+        $return = array();
+
+        if(count($terms) == 0)
+          return $return;
+
+        // Prepering terms 
+        foreach ($terms as $term) {
+          $_terms[$term->parent][] = array('term_id' => $term->term_id, 'name' => $term->name);
+        }
+
+        // Making terms as hierarchical by prefix
+        foreach ($_terms[0] as $term) { // $_terms[0] is parent or parentless terms
+          $return[] = $term;
+          $this->get_childs($term['term_id'], $_terms, $return);
+        }
+
+        return $return;
+      }
+
+      // Helper function for prepare_terms_hierarchicaly
+      public function get_childs($term_id, $terms, &$return, $prefix = "-"){
+        if(isset($terms[$term_id])){
+          foreach ($terms[$term_id] as $child) {
+            $child['name'] = $prefix . " " . $child['name'];
+            $return[] = $child;
+            $this->get_childs($child['term_id'], $terms, $return, $prefix . "-");
+          }
+        }
+      }
+
+
+      /**
+       * Run Upgrade Process.
+       *
+       */
+      public function run_upgrade_process() {
+        Terms_Upgrade::run( $this->old_version, $this->args['version'] );
       }
 
     }
