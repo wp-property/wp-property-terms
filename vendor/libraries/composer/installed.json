@@ -114,7 +114,7 @@
         "dist": {
             "type": "zip",
             "url": "https://github.com/UsabilityDynamics/lib-utility/archive/0.3.6.zip",
-            "reference": null,
+            "reference": "0.3.6",
             "shasum": null
         },
         "require-dev": {
@@ -177,7 +177,7 @@
         "dist": {
             "type": "zip",
             "url": "https://github.com/UsabilityDynamics/lib-wp-bootstrap/archive/1.2.0.zip",
-            "reference": null,
+            "reference": "1.2.0",
             "shasum": null
         },
         "require": {
@@ -215,7 +215,7 @@
         "dist": {
             "type": "zip",
             "url": "https://github.com/UsabilityDynamics/wp-tax-post-binding/archive/2.0.5.zip",
-            "reference": null,
+            "reference": "2.0.5",
             "shasum": null
         },
         "require": {
