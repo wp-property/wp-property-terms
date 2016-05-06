@@ -57,7 +57,7 @@ namespace UsabilityDynamics\WPP {
 
           add_action( 'wpp::save_settings', array( $this, 'save_settings' ) );
           // Add terms settings to backup
-          add_action( 'wpp::backup::data', array( $this, 'backup_settings' ) );
+          add_filter( 'wpp::backup::data', array( $this, 'backup_settings' ) );
 
         }
 
