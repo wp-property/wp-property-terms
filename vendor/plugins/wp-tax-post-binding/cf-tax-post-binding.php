@@ -146,7 +146,7 @@ class cf_taxonomy_post_type_binding {
 	private static $term_before;
 	private static $_stored_paged;
 
-	public static function on_wp_loaded() {
+	public static function init() {
 		$configs = apply_filters('cftpb_configs', array());
 		if (!is_array($configs)) {
 			trigger_error(__('Invalid CF Extended Taxonomy configurations. Plugin contents will not be loaded.', 'cf-tax-post-binding'), E_USER_WARNING);
@@ -371,7 +371,7 @@ jQuery(document).ready(function($) {
 		}
 	}
 
-	public static function on_edited_term($term_id, $tt_id, $taxonomy, $ignore_exists = false) {
+	public static function on_edited_term($term_id, $tt_id, $taxonomy) {
 		if (!self::supports($taxonomy)) {
 			return;
 		}
@@ -387,8 +387,6 @@ jQuery(document).ready(function($) {
 			return;
 		}
 		else if (!empty($post)) {
-			if($ignore_exists)
-				return;
 			// Update the post
 			$old_term = self::$term_before;
 			$update_post['ID'] = $post->ID;
@@ -646,44 +644,11 @@ jQuery(document).ready(function($) {
 		}
 		return $link_text;
 	}
-	
-	/*
-		Create term posts on save settings if rich_taxonomy is selected.
-		Added on wpp::save_settings action hook.
-		Used priority 1 in hook to get the old taxonomies.
-		So Terms_Bootstrap::save_settings() must have priority greater than 1.
-	 */
-
-	public static function create_term_posts_on_save_settings($data) {
-		if( isset($data[ 'wpp_terms' ][ 'taxonomies' ]) && is_array( $data[ 'wpp_terms' ][ 'taxonomies' ] ) ) {
-			$old_taxonomies = ud_get_wpp_terms()->get( 'config.taxonomies', array() );
-			foreach( $data[ 'wpp_terms' ][ 'taxonomies' ] as $taxonomy => $v ) {
-				if(
-					!isset( $v[ 'rich_taxonomy' ]) || 
-					!$v[ 'rich_taxonomy' ] || 
-					(
-						isset($old_taxonomies[$taxonomy]['rich_taxonomy']) &&
-						$v[ 'rich_taxonomy' ] == $old_taxonomies[$taxonomy]['rich_taxonomy']
-					)
-				)
-					continue;
-				self::$taxonomies[$taxonomy] = array('post_type' => $taxonomy);
-				$terms = get_terms( array(
-					'taxonomy' => $taxonomy,
-					'hide_empty' => false,
-					'fields' => 'ids',
-				) );
-				foreach ($terms as $term_id) {
-					self::on_edited_term( (int) $term_id, false, $taxonomy, true);
-				}
-			}
-		}
-	}
 }
 
+add_action('init', 'cf_taxonomy_post_type_binding::init', 99);
 add_filter('cffim_item_thumbnail', 'cf_taxonomy_post_type_binding::cffim_item_thumbnail', 10, 3);
 add_filter('post_type_link', 'cf_taxonomy_post_type_binding::post_link', 10, 2);
-add_action('wp_loaded', 'cf_taxonomy_post_type_binding::on_wp_loaded');
 add_action('admin_head', 'cf_taxonomy_post_type_binding::on_admin_head');
 add_action('admin_head-post.php', 'cf_taxonomy_post_type_binding::on_admin_head_post');
 add_action('admin_head-edit.php', 'cf_taxonomy_post_type_binding::on_admin_head_edit');
@@ -697,5 +662,4 @@ add_filter('posts_results', 'cf_taxonomy_post_type_binding::handle_taxonomy_arch
 add_filter('template_redirect', 'cf_taxonomy_post_type_binding::override_taxonomy_pagination', 1, 3);
 add_filter('wp_title', 'cf_taxonomy_post_type_binding::handle_taxonomy_archive_wp_title', 1, 3);
 add_filter('paginate_links', 'cf_taxonomy_post_type_binding::handle_taxonomy_archive_first_page_link');
-add_action('wpp::save_settings', 'cf_taxonomy_post_type_binding::create_term_posts_on_save_settings', 1);
 } // end loaded check
