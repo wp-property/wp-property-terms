@@ -111,8 +111,9 @@ jQuery(document).ready(function($){
                 exist = is_already_added(item, taglistChild);
 
                 if(exist != true){
-                    var tmpl = _.template( template, {label: label, term: item, name: input_name, parent: parent});
-                    tagchecklist.append(tmpl);
+                    var tmpl = _.template( template);
+                    var rendered = tmpl({label: label, term: item, name: input_name, parent: parent});
+                    tagchecklist.append(rendered);
                 }
             });
             

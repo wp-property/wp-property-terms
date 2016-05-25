@@ -44,13 +44,13 @@ jQuery(document).ready(function($) {
                     return item == tax.label ? (item = "tID_" + tax.value, label = tax.label, !1) : void 0;
                 }), input_name = attrName + "[" + tagchecklist.children().length + "]", exist = is_already_added(item, taglistChild), 
                 1 != exist) {
-                    var tmpl = _.template(template, {
+                    var tmpl = _.template(template), rendered = tmpl({
                         label: label,
                         term: item,
                         name: input_name,
                         parent: parent
                     });
-                    tagchecklist.append(tmpl);
+                    tagchecklist.append(rendered);
                 }
             }), void input_terms.val(""));
         }), input_terms.keypress(function(e) {
