@@ -136,7 +136,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
 
   <tfoot>
   <tr>
-    <td colspan='4'>
+    <td colspan="6">
       <input type="button" class="wpp_add_row button-secondary" value="<?php _e( 'Add Row', 'wpp' ) ?>"/>
     </td>
   </tr>

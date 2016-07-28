@@ -2,7 +2,7 @@
   "name": "wp-property-terms",
   "title": "Wp-Property Terms",
   "description": "The Add-on for WP-Property plugin which adds ability to manage custom taxonomies for your properties.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "homepage": "https://usabilitydynamics.com",
   "author": {
     "name": "UsabilityDynamics, Inc.",
