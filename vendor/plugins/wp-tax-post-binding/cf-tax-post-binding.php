@@ -146,7 +146,7 @@ class cf_taxonomy_post_type_binding {
 	private static $term_before;
 	private static $_stored_paged;
 
-	public static function on_wp_loaded() {
+	public static function init() {
 		$configs = apply_filters('cftpb_configs', array());
 		if (!is_array($configs)) {
 			trigger_error(__('Invalid CF Extended Taxonomy configurations. Plugin contents will not be loaded.', 'cf-tax-post-binding'), E_USER_WARNING);
@@ -646,9 +646,9 @@ jQuery(document).ready(function($) {
 	}
 }
 
+add_action('init', 'cf_taxonomy_post_type_binding::init', 99);
 add_filter('cffim_item_thumbnail', 'cf_taxonomy_post_type_binding::cffim_item_thumbnail', 10, 3);
 add_filter('post_type_link', 'cf_taxonomy_post_type_binding::post_link', 10, 2);
-add_action('wp_loaded', 'cf_taxonomy_post_type_binding::on_wp_loaded');
 add_action('admin_head', 'cf_taxonomy_post_type_binding::on_admin_head');
 add_action('admin_head-post.php', 'cf_taxonomy_post_type_binding::on_admin_head_post');
 add_action('admin_head-edit.php', 'cf_taxonomy_post_type_binding::on_admin_head_edit');

@@ -6,16 +6,16 @@
         "source": {
             "type": "git",
             "url": "https://github.com/composer/installers.git",
-            "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046"
+            "reference": "21a8c06dd5fe0a22b776797cc552e51d17d7e7dd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/installers/zipball/bd9b14f094c89c8b5804a4e41edeb7853bb85046",
-            "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046",
+            "url": "https://api.github.com/repos/composer/installers/zipball/21a8c06dd5fe0a22b776797cc552e51d17d7e7dd",
+            "reference": "21a8c06dd5fe0a22b776797cc552e51d17d7e7dd",
             "shasum": ""
         },
         "require": {
-            "composer-plugin-api": "1.0.0"
+            "composer-plugin-api": "^1.0"
         },
         "replace": {
             "roundcube/plugin-installer": "*",
@@ -25,7 +25,7 @@
             "composer/composer": "1.0.*@dev",
             "phpunit/phpunit": "4.1.*"
         },
-        "time": "2015-10-29 23:28:48",
+        "time": "2016-04-24 13:17:36",
         "type": "composer-plugin",
         "extra": {
             "class": "Composer\\Installers\\Plugin",
@@ -35,8 +35,8 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
-                "Composer\\Installers\\": "src/"
+            "psr-4": {
+                "Composer\\Installers\\": "src/Composer/Installers"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -51,13 +51,16 @@
             }
         ],
         "description": "A multi-framework Composer library installer",
-        "homepage": "http://composer.github.com/installers/",
+        "homepage": "https://composer.github.io/installers/",
         "keywords": [
             "Craft",
             "Dolibarr",
             "Hurad",
+            "ImageCMS",
             "MODX Evo",
+            "Mautic",
             "OXID",
+            "RadPHP",
             "SMF",
             "Thelia",
             "WolfCMS",
@@ -111,7 +114,7 @@
         "dist": {
             "type": "zip",
             "url": "https://github.com/UsabilityDynamics/lib-utility/archive/0.3.6.zip",
-            "reference": null,
+            "reference": "0.3.6",
             "shasum": null
         },
         "require-dev": {
@@ -164,17 +167,17 @@
     },
     {
         "name": "usabilitydynamics/lib-wp-bootstrap",
-        "version": "1.1.9",
-        "version_normalized": "1.1.9.0",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
         "source": {
             "type": "git",
             "url": "git@github.com:UsabilityDynamics/lib-wp-bootstrap",
-            "reference": "1.1.9"
+            "reference": "1.2.0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/UsabilityDynamics/lib-wp-bootstrap/archive/1.1.9.zip",
-            "reference": null,
+            "url": "https://github.com/UsabilityDynamics/lib-wp-bootstrap/archive/1.2.0.zip",
+            "reference": "1.2.0",
             "shasum": null
         },
         "require": {
@@ -202,17 +205,17 @@
     },
     {
         "name": "usabilitydynamics/wp-tax-post-binding",
-        "version": "2.0.4",
-        "version_normalized": "2.0.4.0",
+        "version": "2.0.5",
+        "version_normalized": "2.0.5.0",
         "source": {
             "type": "git",
             "url": "git@github.com:UsabilityDynamics/wp-tax-post-binding",
-            "reference": "2.0.4"
+            "reference": "2.0.5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://github.com/UsabilityDynamics/wp-tax-post-binding/archive/2.0.4.zip",
-            "reference": null,
+            "url": "https://github.com/UsabilityDynamics/wp-tax-post-binding/archive/2.0.5.zip",
+            "reference": "2.0.5",
             "shasum": null
         },
         "require": {

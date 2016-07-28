@@ -20,14 +20,15 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
 
 <p style="margin-top: 0;"><?php printf( __( 'Manage your %s Taxonomies here. Note, you can not remove all taxonomies, in this case default WP-Property taxonomies will be returned back.', ud_get_wpp_terms()->domain ), WPP_F::property_label() ); ?></p>
 
+<p><?php printf(__( 'Note, taxonomies length limit is 32 characters.', ud_get_wpp_terms()->domain ));?></p>
 <table id="" class="wpp_sortable wpp_inquiry_attribute_fields ud_ui_dynamic_table widefat">
   <thead>
   <tr>
     <th class='wpp_draggable_handle'>&nbsp;</th>
     <th class='wpp_attribute_name_col'><?php _e( 'Label', ud_get_wpp_terms()->domain ) ?></th>
+    <th class='wpp_attribute_name_col'><?php _e( 'Type', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_attribute_group_col'><?php _e( 'Group', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_settings_col'><?php _e( 'Settings', ud_get_wpp_terms()->domain ) ?></th>
-    <th class='wpp_settings_col'><?php _e( 'Type', ud_get_wpp_terms()->domain ) ?></th>
     <th class='wpp_delete_col'>&nbsp;</th>
   </tr>
   </thead>
@@ -47,7 +48,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       <td>
         <ul>
           <li>
-            <input class="slug_setter" type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][label]" value="<?php echo $data['label']; ?>"/>
+            <input class="slug_setter" type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][label]" value="<?php echo $data['label']; ?>" maxlength='32'/>
           </li>
           <li class="wpp_development_advanced_option">
             <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>"/>
@@ -59,6 +60,15 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
             <span class="wpp_show_advanced"><?php _e( 'Toggle Advanced Settings', ud_get_wpp_terms()->domain ); ?></span>
           </li>
         </ul>
+      </td>
+
+      <td>
+        <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
+          <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
+            <option value="<?php echo $k ?>" <?php echo selected( $k, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
+          <?php endforeach; ?>
+        </select>
+      </td>
 
       <td class="wpp_attribute_group_col">
         <input type="text" class="wpp_attribute_group wpp_taxonomy_group wpp_group" value="<?php echo( !empty( $group[ 'name' ] ) ? $group[ 'name' ] : "" ); ?>"/>
@@ -68,7 +78,7 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       <td>
         <ul>
           <li class="wpp_development_advanced_option">
-            <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>"/></label>
+            <label><?php _e( 'Rewrite Slug', ud_get_wpp_terms()->domain ); ?> <input type="text" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rewrite][slug]" value="<?php echo !empty( $data['rewrite']['slug'] ) ? $data['rewrite']['slug'] : $slug; ?>" maxlength='32'/></label>
           </li>
           <?php if( !empty( $search_input ) && is_array( $search_input ) ) : ?>
           <li class="wpp_development_advanced_option">
@@ -98,21 +108,22 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
           </li>
 
           <li class="wpp_development_advanced_option">
-            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_ui]" <?php checked( $data['show_ui'], true ); ?> value="true"/> <?php _e( 'Show in Admin Menu and add native Meta Box', ud_get_wpp_terms()->domain ); ?></label>
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][show_in_menu]" <?php checked( $data['show_in_menu'], true ); ?> value="true"/> <?php _e( 'Show in Admin Menu', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][add_native_mtbox]" <?php checked( $data['add_native_mtbox'], true ); ?> value="true"/> <?php _e( 'Add native Meta Box', ud_get_wpp_terms()->domain ); ?></label>
           </li>
 
           <li class="wpp_development_advanced_option">
             <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][rich_taxonomy]" <?php checked( $data['rich_taxonomy'], true ); ?> value="true"/> <?php _e( 'Add Term Post', ud_get_wpp_terms()->domain ); ?></label>
           </li>
-        </ul>
-      </td>
 
-      <td>
-        <select class="wpp-terms-type-selector" name="wpp_terms[types][<?php echo $slug; ?>]">
-          <?php foreach( ud_get_wpp_terms( 'types', array() ) as $k => $type ) : ?>
-            <option value="<?php echo $k ?>" <?php echo selected( $k, ud_get_wpp_terms( "config.types.{$slug}" ) ) ?> data-desc="<?php echo $type[ 'desc' ]; ?>" ><?php echo $type[ 'label' ]; ?></option>
-          <?php endforeach; ?>
-        </select>
+          <li class="wpp_development_advanced_option">
+            <label><input type="checkbox" name="wpp_terms[taxonomies][<?php echo $slug; ?>][admin_searchable]" <?php checked( $data['admin_searchable'], true ); ?> value="true" class="wpp-terms-option-admin_searchable"/> <?php _e( 'Admin Searchable', ud_get_wpp_terms()->domain ); ?></label>
+          </li>
+
+        </ul>
       </td>
 
       <td>
