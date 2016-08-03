@@ -692,7 +692,12 @@ namespace UsabilityDynamics\WPP {
         /** Take care about Taxonomies fields */
         foreach( $taxonomies as $taxonomy => $data ){
 
-          add_filter( 'wpp_search_form_field_' . $taxonomy, function( $html, $taxonomy, $label, $value, $input, $random_id ) {
+          add_filter( 'wpp_search_form_field_' . $taxonomy, array($this, 'wpp_search_form_field'), 10, 6 );
+
+        }
+      }
+
+      function wpp_search_form_field( $html, $taxonomy, $label, $value, $input, $random_id ) {
 
             $search_input = ud_get_wp_property( "searchable_attr_fields.{$taxonomy}" );
             $terms = get_terms( $taxonomy, array( 'fields' => 'all' ) );
@@ -737,9 +742,6 @@ namespace UsabilityDynamics\WPP {
 
             return ob_get_clean();
 
-          }, 10, 6 );
-
-        }
       }
 
       /**
