@@ -142,15 +142,20 @@ namespace UsabilityDynamics\WPP {
         // Removing nativ metabox if  Show in Admin Menu and add native Meta Box isn't set.
         $taxonomies = $this->get( 'config.taxonomies', array() );
         foreach ($taxonomies as $taxonomy => $args) {
+          if($args['hierarchical'])
+            $_id = $taxonomy . "div";
+          else
+            $_id = "tagsdiv-$taxonomy";
+
           if(!isset($args['add_native_mtbox']) || $args['add_native_mtbox'] == false)
-            remove_meta_box( "tagsdiv-$taxonomy", 'property', 'side' );
+            remove_meta_box( $_id, 'property', 'side' );
         }
 
         if( isset( $_REQUEST['post'] ) && is_numeric( $_REQUEST['post'] ) ) {
           $type = get_post_meta( $_REQUEST['post'], 'property_type', true );
         }
 
-        if( !isset( $type ) ) {
+        if( !isset( $type ) || !$type ) {
           return;
         }
 
@@ -158,7 +163,12 @@ namespace UsabilityDynamics\WPP {
         $inherited = $this->get( 'config.inherited.' . $type, array() );
         if( !empty( $inherited ) && is_array( $inherited ) ) {
           foreach( $inherited as $taxonomy ) {
-            remove_meta_box( 'tagsdiv-' . $taxonomy, 'property', 'side' );
+            $args = $taxonomies[$taxonomy];
+            if($args['hierarchical'])
+              $_id = $taxonomy . "div";
+            else
+              $_id = "tagsdiv-" . $taxonomy;
+            remove_meta_box( $_id, 'property', 'side' );
           }
         }
 
@@ -166,7 +176,13 @@ namespace UsabilityDynamics\WPP {
         $hidden = $this->get( 'config.hidden.' . $type, array() );
         if( !empty( $hidden ) && is_array( $hidden ) ) {
           foreach( $hidden as $taxonomy ) {
-            remove_meta_box( 'tagsdiv-' . $taxonomy, 'property', 'side' );
+            print_r($taxonomy);
+            $args = $taxonomies[$taxonomy];
+            if($args['hierarchical'])
+              $_id = $taxonomy . "div";
+            else
+              $_id = "tagsdiv-$taxonomy";
+            remove_meta_box( $_id, 'property', 'side' );
           }
         }
 
@@ -474,6 +490,7 @@ namespace UsabilityDynamics\WPP {
        * @return array
        */
       public function add_meta_box( $meta_boxes ) {
+        global $wp_properties;
 
         if( !is_array( $meta_boxes ) ) {
           $meta_boxes = array();
@@ -523,7 +540,8 @@ namespace UsabilityDynamics\WPP {
 
             default:
               /** Do not add taxonomy field if native meta box is being used for it. */
-              if( isset($d[ 'add_native_mtbox' ]) && $d[ 'add_native_mtbox' ] ) {
+              if( (isset($d[ 'add_native_mtbox' ]) && $d[ 'add_native_mtbox' ])
+               || (isset($wp_properties['taxonomies'][$k]['hidden']) && $wp_properties['taxonomies'][$k]['hidden'])) {
                 break;
               }
               $field = array(
@@ -765,6 +783,9 @@ namespace UsabilityDynamics\WPP {
       public function prepare_taxonomy( $args, $taxonomy ) {
 
         $args = wp_parse_args( $args, array(
+          'default' => false,
+          'readonly' => false,
+          'hidden' => false,
           'label' => $taxonomy,
           'labels' => array(),
           'public' => false,

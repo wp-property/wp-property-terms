@@ -127,6 +127,10 @@ wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/style
       </td>
 
       <td>
+        <input type="hidden" name="wpp_terms[taxonomies][<?php echo $slug; ?>][default]" value="<?php echo isset($data['admin_searchable'])?$data['default']:false;?>">
+        <input type="hidden" name="wpp_terms[taxonomies][<?php echo $slug; ?>][readonly]" value="<?php echo isset($data['admin_searchable'])?$data['readonly']:false;?>">
+        <input type="hidden" name="wpp_terms[taxonomies][<?php echo $slug; ?>][hidden]" value="<?php echo isset($data['admin_searchable'])?$data['hidden']:false;?>">
+
         <span class="wpp_delete_row wpp_link"><?php _e( 'Delete', ud_get_wpp_terms()->domain ); ?></span>
       </td>
     </tr>
