@@ -43,7 +43,9 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 					break;
 				case 'select':
 				default:
+					$field['options'] = $field['values'];
 					$html = RWMB_Select_Field::html( $meta, $field );
+					break;
 			}
 
 			return $html;
