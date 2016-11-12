@@ -265,7 +265,7 @@ namespace UsabilityDynamics\WPP {
 
         if( !empty($taxonomies) && is_array($taxonomies) ) {
           foreach( $taxonomies as $k => $v ) {
-            $field_type = !empty($v['readonly']) ? 'select' : 'select_advanced';
+
             // ignore terms that are not explicitly set as searchable
             if( !isset( $v['admin_searchable'] ) || !$v['admin_searchable'] ) {
               continue;
@@ -285,7 +285,7 @@ namespace UsabilityDynamics\WPP {
               ),
               'options' => array(
                 'taxonomy' => $k,
-                'type' => $field_type,
+                'type' => 'select_advanced',
                 'args' => array(),
               ),
               'map' => array(
@@ -516,13 +516,7 @@ namespace UsabilityDynamics\WPP {
         $fields = array();
 
         foreach($taxonomies as $k => $d) {
-          $field_type = ( isset( $d[ 'hierarchical' ] ) && $d[ 'hierarchical' ] == true ? 'select_tree' : 'select_advanced' );
-          $field_type = !empty($d['readonly']) ? 'select' : $field_type;
-          $terms = get_terms( array(
-                      'taxonomy' => $k,
-                      'hide_empty' => false,
-                      'fields' => 'id=>name',
-                    ));
+
           $field = array();
 
           switch( true ) {
@@ -554,11 +548,10 @@ namespace UsabilityDynamics\WPP {
                 'name' => $d['label'],
                 'id' => $k,
                 'type' => 'wpp_taxonomy',
-                'values' => $terms,
                 'multiple' => ( isset( $types[ $k ] ) && $types[ $k ] == 'unique' ? false : true ),
                 'options' => array(
                   'taxonomy' => $k,
-                  'type' => $field_type,
+                  'type' => ( isset( $d[ 'hierarchical' ] ) && $d[ 'hierarchical' ] == true ? 'select_tree' : 'select_advanced' ),
                   'args' => array(),
               ) );
               break;
