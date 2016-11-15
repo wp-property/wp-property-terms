@@ -645,6 +645,11 @@ namespace UsabilityDynamics\WPP {
         /** Be sure that we have any taxonomy to register. If not, we set default taxonomies of WP-Property. */
         if( !$this->get( 'config.taxonomies' ) ) {
           $this->set( 'config.taxonomies', $taxonomies );
+          $types = array();
+          foreach ($taxonomies as $taxonomy => $data) {
+            $types[$taxonomy] = isset($data['unique']) && $data['unique'] ? 'unique' : '';
+          }
+          $this->set( 'config.types', $types );
         }
 
         /**
@@ -785,6 +790,7 @@ namespace UsabilityDynamics\WPP {
         $args = wp_parse_args( $args, array(
           'default' => false,
           'readonly' => false,
+          'unique' => true,
           'hidden' => false,
           'label' => $taxonomy,
           'labels' => array(),
