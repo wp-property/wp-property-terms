@@ -26,6 +26,9 @@ jQuery(document).ready(function($) {
                         input.autocomplete("instance")._renderItem = function(ul, item) {
                             var exist = item.label == input.val(), selected = exist ? "ui-state-selected" : "";
                             return $("<li>").append("<a class='" + selected + "'>" + item.label + "</a>").appendTo(ul);
+                        }, input.autocomplete("instance")._resizeMenu = function() {
+                            var ul = this.menu.element;
+                            ul.outerWidth(input.outerWidth() + btntoggle.outerWidth());
                         }, input.autocomplete("widget").addClass("wpp-autocomplete");
                     }), input_terms.on("focus", function() {
                         var input = $(this);

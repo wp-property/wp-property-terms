@@ -49,6 +49,10 @@ jQuery(document).ready(function($){
                             .append( "<a class='"+selected+"'>" + item.label + "</a>" )
                             .appendTo( ul );
                         };
+                        input.autocomplete( "instance" )._resizeMenu = function () {
+                          var ul = this.menu.element;
+                          ul.outerWidth(input.outerWidth() + btntoggle.outerWidth());
+                        }
                         input.autocomplete( "widget" ).addClass('wpp-autocomplete');
                     });
 
