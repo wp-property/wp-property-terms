@@ -26,7 +26,7 @@
   },
   "require": {
     "php": ">=5.3",
-    "usabilitydynamics/lib-utility": "0.3.6",
+    "usabilitydynamics/lib-utility": "0.3.7",
     "usabilitydynamics/lib-wp-bootstrap": "1.2.1",
     "usabilitydynamics/wp-tax-post-binding": "2.0.5"
   },
