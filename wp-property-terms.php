@@ -41,6 +41,11 @@ if( !function_exists( 'ud_check_wpp_terms' ) ) {
    */
   function ud_check_wpp_terms() {
     global $_ud_wpp_terms_error;
+    
+    if( defined( 'WPP_TERMS_VENDOR_LOADED' ) ) {
+      return true;
+    }
+    
     try {
       //** Be sure composer.json exists */
       $file = dirname( __FILE__ ) . '/composer.json';
