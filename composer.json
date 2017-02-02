@@ -17,28 +17,9 @@
     "type": "git",
     "url": "https://github.com/wp-property/wp-property-terms.git"
   },
-  "config": {
-    "preferred-install": "dist",
-    "github-protocols": [ "ssh" ],
-    "vendor-dir": "vendor/libraries",
-    "bin-dir": "vendor/bin",
-    "optimize-autoloader": true
-  },
-  "require": {
-    "php": ">=5.3",
-    "usabilitydynamics/lib-utility": "0.3.7",
-    "usabilitydynamics/lib-wp-bootstrap": "1.2.1",
-    "usabilitydynamics/wp-tax-post-binding": "2.0.5"
-  },
-  "require-dev": {
-    "usabilitydynamics/lib-wp-phpunit": "~0.2",
-    "codeclimate/php-test-reporter": "~0.1"
-  },
   "autoload": {
     "classmap": [ "lib/classes" ],
-    "files": [
-      "wp-property-terms.php"
-    ]
+    "files": [ "loader.php" ]
   },
   "archive": {
     "exclude": [
@@ -53,29 +34,12 @@
     ]
   },
   "extra": {
-    "installer-paths": {
-      "vendor/plugins/{$name}": [
-        "type:wordpress-muplugin",
-        "type:wordpress-module",
-        "type:wordpress-plugin",
-        "type:wpackagist-plugin"
-      ],
-      "vendor/libraries/{$vendor}/{$name}": [
-        "type:wordpress-library"
-      ]
-    },
     "schemas": {
       "dependencies" : {
         "modules": {},
         "plugins": {}
       },
-      "licenses" : {
-        "client" : false,
-        "product" : {
-          "referrer": "wp-property/wp-property",
-          "product_id": "wp-property/wp-property-terms"
-        }
-      }
+      "licenses" : {}
     }
   }
 }
