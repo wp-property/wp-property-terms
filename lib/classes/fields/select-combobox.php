@@ -2,9 +2,6 @@
 // Prevent loading this file directly
 defined( 'ABSPATH' ) || exit;
 
-// Make sure "select" field is loaded
-require_once RWMB_FIELDS_DIR . 'select.php';
-
 if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) ){
   class RWMB_Wpp_Select_Combobox_Field extends RWMB_Select_Field{
     /**
@@ -26,41 +23,46 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) ){
      * @return string
      */
     static function html( $meta, $field ){
-      $terms = array();
-      $options = $field['_options'];
-      $field_name = trim($field['field_name'], '[]');
-
-      foreach ($field['options'] as $id => $label) {
-        $terms[] = array('value' => $id, 'label' => $label);
+      $options = $field['options'];
+      
+      $field_name = $field['field_name'];
+      if(substr_compare($field_name, '[]', -2) === 0){
+        $field_name = substr_replace($field_name, '', -2);
       }
 
-      $meta     = array_values($meta);
       $term_id  = '';
       $term_name  = '';
-      if(isset($meta[0])){
-        $term_id = $meta[0];
-        $term = get_term( $term_id , $options['taxonomy'] );
-        $term_name = $term->name; 
-        $term_id = "tID_" . $term_id;
+
+      if(is_array($meta) ){
+        $meta = reset($meta);
+      }
+
+      if($meta){
+        $term = get_term( $meta , $options['taxonomy'] );
+
+        if($term && !is_wp_error($term)){
+          $term_name = $term->name; 
+          $term_id = "tID_" . $term_id;
+        }
       }
 
       ob_start();
 
       ?>
-      <div 
-        class="rwmb-field wpp-taxonomy-select-combobox wpp_ui" 
+      <div
+        class="rwmb-field wpp-taxonomy-select-combobox wpp_ui"
         data-taxonomy="<?php echo $options['taxonomy'];?>">
         <div class="clearfix term">
           <input
               type = "text"
-              class="ui-corner-left wpp-terms-input wpp-terms-term" 
+              class="ui-corner-left wpp-terms-input wpp-terms-term"
               autocomplete="off"
               value="<?php echo $term_name?>"
             >
           <input
               type = "hidden"
-              class="wpp-terms-id-input" 
-              name="<?php echo $field_name;?>[0][term]" 
+              class="wpp-terms-id-input"
+              name="<?php echo $field_name;?>[0][term]"
               value="<?php echo $term_id?>"
             >
           <a tabindex="-1" title="Show All Items" class="ui-widget ui-state-default ui-button-icon-only select-combobox-toggle ui-corner-right" role="button">
@@ -80,7 +82,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Combobox_Field' ) ){
           <input
               type = "hidden"
               class="wpp-terms-id-input"
-              name="<?php echo $field_name;?>[0][parent]" 
+              name="<?php echo $field_name;?>[0][parent]"
             >
           <a tabindex="-1" title="Show All Items" class="ui-widget ui-state-default ui-button-icon-only select-combobox-toggle ui-corner-right" role="button">
             <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-s"></span>

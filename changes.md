@@ -1,3 +1,12 @@
+### 1.1.0
+* Added support of system taxonomies, which can not be set with custom options.
+* Disabled ability to remove system taxonomy.
+* Extend property object with taxonomies terms earlier.
+* Extend the draw attributes function with single-value taxonomies being treated as regular attributes.
+* Refactored meta box type options on Edit Property page.
+* Refactored taxonomy UI on WP-Property Settings page.
+* Fixed Fatal Errors.
+
 ### 1.0.2 ( July 28, 2016 )
 * Added Add-on's settings to Backup of Current WP-Property Configuration.
 * Fixed compatibility with Mandrill plugin.

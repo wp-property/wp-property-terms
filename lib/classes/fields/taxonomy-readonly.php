@@ -2,17 +2,15 @@
 // Prevent loading this file directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
-	class RWMB_Wpp_Taxonomy_Field extends RWMB_Taxonomy_Field{
+if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Readonly_Field' ) ){
+	class RWMB_Wpp_Taxonomy_Readonly_Field extends RWMB_Field{
 		/**
 		 * Enqueue scripts and styles
 		 *
 		 * @return void
 		 */
 		static function admin_enqueue_scripts(){
-			RWMB_Select_Advanced_Field::admin_enqueue_scripts();
-			RWMB_Wpp_Select_Advanced_Field::admin_enqueue_scripts();
-			RWMB_Wpp_Select_Combobox_Field::admin_enqueue_scripts();
+
 		}
 
 		/**
@@ -24,24 +22,27 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 		 * @return string
 		 */
 		static function html( $meta, $field ){
+
+			$taxonomy = $field['id'];
 			$options = $field['options'];
 
-			$html = '';
-
-			switch ( $options['type'] ){
-				case 'select_tree':
-				case 'select_advanced':
-					if($field['multiple'] == true){
-						$html = RWMB_Wpp_Select_Advanced_Field::html( $meta, $field );
-					}
-					else{ // if it's not  multiple using default select advance field
-						$html = RWMB_Wpp_Select_Combobox_Field::html( $meta, $field );
-					}
-					break;
-				case 'select':
-				default:
-					$html = RWMB_Wpp_Select_Combobox_Field::html( $meta, $field );
+			ob_start();
+			$template = ud_get_wpp_terms()->path( 'static/views/admin/field-taxonomy-readonly.php', 'dir' );
+			if( file_exists( $template ) ) {
+				include( $template );
 			}
+			$html = ob_get_clean();
+
+			/*
+			ob_start();
+			echo "<pre>";
+			print_r($meta);
+			echo "</pre>";
+			echo "<pre>";
+			print_r($field);
+			echo "</pre>";
+			$html = ob_get_clean();
+			//*/
 
 			return $html;
 		}
@@ -74,9 +75,9 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 						$p	= array('term_id'=>$id);
 					}
 					// Doing another check before insert.
-					else if($parent && !($p = term_exists($parent, $field['taxonomy']))){
+					else if($parent && !($p = term_exists($parent, $field['options']['taxonomy']))){
 						// Inserting new new term.
-						$p = wp_insert_term( $parent, $field['taxonomy']);
+						$p = wp_insert_term( $parent, $field['options']['taxonomy']);
 					}
 					else{
 						$p = array('term_id'=> 0);
@@ -87,9 +88,9 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 						$t		= array('term_id'=>$id);
 					}
 					// Doing another check before insert.
-					else if(!$t = term_exists($name, $field['taxonomy'])){
+					else if(!$t = term_exists($name, $field['options']['taxonomy'])){
 						// Inserting new new term.
-						$t 		= wp_insert_term( $name, $field['taxonomy'], array('parent'=>$p['term_id']));
+						$t 		= wp_insert_term( $name, $field['options']['taxonomy'], array('parent'=>$p['term_id']));
 					}
 
 					if(!is_wp_error($t))
@@ -98,7 +99,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 			}
 
 			$term_ids = array_map( 'intval', $term_ids );
-			wp_set_object_terms( $post_id, $term_ids, $field['taxonomy'] );
+			wp_set_object_terms( $post_id, $term_ids, $field['options']['taxonomy'] );
 		}
 	}
 }

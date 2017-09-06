@@ -2,9 +2,6 @@
 // Prevent loading this file directly
 defined( 'ABSPATH' ) || exit;
 
-// Make sure "select" field is loaded
-require_once RWMB_FIELDS_DIR . 'select.php';
-
 if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
   class RWMB_Wpp_Select_Advanced_Field extends RWMB_Select_Field{
     /**
@@ -14,7 +11,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
      */
     static function admin_enqueue_scripts(){
       wp_enqueue_style( 'field-wpp-taxonomy-inherited', ud_get_wpp_terms()->path( 'static/styles/fields/wpp-select-advance.css' ), array('wp-admin'),  ud_get_wpp_terms('version'));
-      wp_enqueue_script( 'rwmb-taxonomy', ud_get_wpp_terms()->path( 'static/scripts/fields/wpp-select-advance.js' ), array( 'jquery', 'jquery-ui-autocomplete', 'underscore' ), ud_get_wpp_terms('version'), true );
+      wp_enqueue_script( 'wpp-select-advance', ud_get_wpp_terms()->path( 'static/scripts/fields/wpp-select-advance.js' ), array( 'jquery', 'jquery-ui-autocomplete', 'underscore' ), ud_get_wpp_terms('version'), true );
     }
 
     /**
@@ -29,11 +26,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
       global $wpp_terms_taxonomy_field_counter;
       $wpp_terms_taxonomy_field_counter++;
       $tax_counter = 0;
-      $terms = array();
-      $options = $field['_options'];
-      foreach ($field['options'] as $id => $label) {
-        $terms[] = array('value' => $id, 'label' => $label);
-      }
+      $options = $field['options'];
       $field_name = trim($field['field_name'], '[]');
       ob_start();
 
@@ -41,7 +34,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
       <div 
         class="rwmb-field rwmb-wpp-taxonomy-wrapper" 
         data-name="<?php echo $field_name;?>" 
-        data-taxonomy="<?php echo $options['taxonomy'];?>" 
+        data-taxonomy="<?php echo $field['taxonomy'];?>" 
         data-tax-counter="<?php echo $wpp_terms_taxonomy_field_counter;?>">
         <div class="taxsdiv">
           <div class="jaxtag">
@@ -63,7 +56,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
             <?php
             if(is_array($meta))
               foreach ($meta as $term) {
-                $term = get_term( $term , $options['taxonomy'] );
+                $term = get_term( $term , $field['taxonomy'] );
                 $term_id = "tID_" . $term->term_id;
                 echo "<span class='tax-tag'>";
                   echo "<a class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term->name}";
