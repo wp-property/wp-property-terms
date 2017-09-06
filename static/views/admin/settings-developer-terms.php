@@ -7,7 +7,7 @@
 wp_enqueue_script( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/scripts/wpp.terms.settings.js', 'url' ), array( 'wp-property-admin-settings' ) );
 wp_enqueue_style( 'wpp-terms-settings', ud_get_wpp_terms()->path( '/static/styles/wpp.terms.settings.css', 'url' ) );
 
-$_term_config = (array) ud_get_wpp_terms( 'config', array() );
+$_term_config = (array) ud_get_wpp_terms( 'config', array( 'taxonomies' => array() ) );
 $_term_types = (array) ud_get_wpp_terms( 'types', array() );
 
 foreach( $_term_config['taxonomies'] as $slug => $data ){

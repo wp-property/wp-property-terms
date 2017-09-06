@@ -7,7 +7,6 @@
 namespace UsabilityDynamics\WPP {
 
   use UsabilityDynamics\WP\Bootstrap_Plugin;
-  use UsabilityDynamics\Settings;
   use WPP_F;
 
   if( !class_exists( 'UsabilityDynamics\WPP\Terms_Bootstrap' ) ) {
@@ -918,7 +917,7 @@ namespace UsabilityDynamics\WPP {
       public function define_taxonomies( $taxonomies ) {
 
         /** Init Settings */
-        $this->settings = new Settings( array(
+        $this->settings = new \UsabilityDynamics\Settings( array(
           'key'  => 'wpp_terms',
           'store'  => 'options',
           'data' => array(
