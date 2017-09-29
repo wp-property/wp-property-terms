@@ -449,7 +449,7 @@ namespace UsabilityDynamics\WPP {
       public function custom_search_query( $matching_ids, $key, $criteria ) {
         // Be sure that queried key belongs to taxonomy
         $taxonomies = $this->get( 'config.taxonomies', array() );
-        if( empty( $taxonomies ) || !is_array( $taxonomies ) || !in_array( $key, array_keys($taxonomies) ) ) {
+        if( empty( $taxonomies ) || !is_array( $taxonomies ) || !in_array( $key, array_filter(array_keys($taxonomies)) ) ) {
           return $matching_ids;
         }
 
