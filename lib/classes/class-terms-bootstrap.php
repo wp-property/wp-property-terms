@@ -1167,7 +1167,7 @@ namespace UsabilityDynamics\WPP {
 
         foreach( self::get_multi_value_taxonomies() as $_tax_key => $_tax_data ) {
 
-          if( $_tax_data['hidden'] === true ) {
+          if( isset( $_tax_data['hidden'] ) && $_tax_data['hidden'] === true ) {
             continue;
           }
 
