@@ -1152,7 +1152,7 @@ namespace UsabilityDynamics\WPP {
 
         foreach( self::get_single_value_taxonomies() as $_tax_key => $_tax_data ) {
 
-          if( $_tax_data['hidden']) { continue; }
+          if( isset( $_tax_data['hidden'] ) && $_tax_data['hidden']) { continue; }
 
           $_terms = wp_get_object_terms( $property['ID'], $_tax_key, array( 'fields' => 'names' ) );
 
