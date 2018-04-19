@@ -51,44 +51,6 @@
         ]
     },
     {
-        "name": "usabilitydynamics/lib-wp-bootstrap",
-        "version": "1.2.1",
-        "version_normalized": "1.2.1.0",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:UsabilityDynamics/lib-wp-bootstrap",
-            "reference": "1.2.1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://github.com/UsabilityDynamics/lib-wp-bootstrap/archive/1.2.1.zip",
-            "reference": "1.2.1",
-            "shasum": null
-        },
-        "require": {
-            "php": ">=5.3",
-            "usabilitydynamics/lib-utility": "~0.3"
-        },
-        "type": "library",
-        "extra": {
-            "installer-name": "lib-wp-bootstrap"
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "lib/classes"
-            ]
-        },
-        "license": [
-            "MIT"
-        ],
-        "description": "Wordpress bootstrap library created by UsabilityDynamics",
-        "homepage": "https://github.com/UsabilityDynamics/lib-wp-bootstrap",
-        "keywords": [
-            "wordpress"
-        ]
-    },
-    {
         "name": "composer/installers",
         "version": "v1.2.0",
         "version_normalized": "1.2.0.0",
@@ -114,7 +76,7 @@
             "composer/composer": "1.0.*@dev",
             "phpunit/phpunit": "4.1.*"
         },
-        "time": "2016-08-13 20:53:52",
+        "time": "2016-08-13T20:53:52+00:00",
         "type": "composer-plugin",
         "extra": {
             "class": "Composer\\Installers\\Plugin",
@@ -258,6 +220,44 @@
             "job",
             "process",
             "utility"
+        ]
+    },
+    {
+        "name": "usabilitydynamics/lib-wp-bootstrap",
+        "version": "1.2.3",
+        "version_normalized": "1.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:UsabilityDynamics/lib-wp-bootstrap",
+            "reference": "1.2.3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/UsabilityDynamics/lib-wp-bootstrap/archive/1.2.3.zip",
+            "reference": "1.2.3",
+            "shasum": null
+        },
+        "require": {
+            "php": ">=5.3",
+            "usabilitydynamics/lib-utility": "~0.3"
+        },
+        "type": "library",
+        "extra": {
+            "installer-name": "lib-wp-bootstrap"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "lib/classes"
+            ]
+        },
+        "license": [
+            "MIT"
+        ],
+        "description": "Wordpress bootstrap library created by UsabilityDynamics",
+        "homepage": "https://github.com/UsabilityDynamics/lib-wp-bootstrap",
+        "keywords": [
+            "wordpress"
         ]
     }
 ]

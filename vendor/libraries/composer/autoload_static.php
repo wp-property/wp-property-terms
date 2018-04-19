@@ -101,6 +101,7 @@ class ComposerStaticInite2785405f0a6b7f55ec316a45b405cc6
         'RWMB_Wpp_Select_Combobox_Field' => __DIR__ . '/../../..' . '/lib/classes/fields/select-combobox.php',
         'RWMB_Wpp_Taxonomy_Field' => __DIR__ . '/../../..' . '/lib/classes/fields/taxonomy.php',
         'RWMB_Wpp_Taxonomy_Inherited_Field' => __DIR__ . '/../../..' . '/lib/classes/fields/class-wpp-taxonomy-inherited.php',
+        'RWMB_Wpp_Taxonomy_Readonly_Field' => __DIR__ . '/../../..' . '/lib/classes/fields/taxonomy-readonly.php',
         'UsabilityDynamics\\CFTPB\\Loader' => __DIR__ . '/../../..' . '/vendor/plugins/wp-tax-post-binding/lib/class-loader.php',
         'UsabilityDynamics\\Job' => __DIR__ . '/..' . '/usabilitydynamics/lib-utility/lib/class-job.php',
         'UsabilityDynamics\\Loader' => __DIR__ . '/..' . '/usabilitydynamics/lib-utility/lib/class-loader.php',

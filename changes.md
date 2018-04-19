@@ -1,10 +1,13 @@
-### 1.1.0
-* Added support of system taxonomies, which can not be set with custom options.
+### 1.1.0 ( April 19, 2018 )
+* Added new default taxonomy Property Location (wpp_location). It automatically takes terms from Address attribute. Can be enabled in composer.json
+* Added new default taxonomy Property Type. Can be enabled in composer.json
+* Added support of system taxonomies, which can not be set with custom options. Can be enabled in composer.json
 * Disabled ability to remove system taxonomy.
-* Extend property object with taxonomies terms earlier.
-* Extend the draw attributes function with single-value taxonomies being treated as regular attributes.
+* Extended property object with taxonomies terms earlier.
+* Extended the draw attributes function with single-value taxonomies being treated as regular attributes.
 * Refactored meta box type options on Edit Property page.
 * Refactored taxonomy UI on WP-Property Settings page.
+* Fixed Warnings and Notices.
 * Fixed Fatal Errors.
 
 ### 1.0.2 ( July 28, 2016 )

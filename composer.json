@@ -1,7 +1,6 @@
 {
   "name": "wp-property/terms",
   "type": "wordpress-plugin",
-  "minimum-stability": "dev",
   "homepage": "https://www.usabilitydynamics.com/product/wp-property-terms",
   "author": {
     "name": "UsabilityDynamics, Inc.",
@@ -27,12 +26,8 @@
   "require": {
     "php": ">=5.3",
     "usabilitydynamics/lib-utility": "0.3.7",
-    "usabilitydynamics/lib-wp-bootstrap": "1.2.1",
+    "usabilitydynamics/lib-wp-bootstrap": "1.2.3",
     "usabilitydynamics/wp-tax-post-binding": "2.0.5"
-  },
-  "require-dev": {
-    "usabilitydynamics/lib-wp-phpunit": "~0.2",
-    "codeclimate/php-test-reporter": "~0.1"
   },
   "autoload": {
     "classmap": [ "lib/classes" ],

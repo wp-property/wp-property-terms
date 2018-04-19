@@ -82,6 +82,7 @@ return array(
     'RWMB_Wpp_Select_Combobox_Field' => $baseDir . '/lib/classes/fields/select-combobox.php',
     'RWMB_Wpp_Taxonomy_Field' => $baseDir . '/lib/classes/fields/taxonomy.php',
     'RWMB_Wpp_Taxonomy_Inherited_Field' => $baseDir . '/lib/classes/fields/class-wpp-taxonomy-inherited.php',
+    'RWMB_Wpp_Taxonomy_Readonly_Field' => $baseDir . '/lib/classes/fields/taxonomy-readonly.php',
     'UsabilityDynamics\\CFTPB\\Loader' => $baseDir . '/vendor/plugins/wp-tax-post-binding/lib/class-loader.php',
     'UsabilityDynamics\\Job' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-job.php',
     'UsabilityDynamics\\Loader' => $vendorDir . '/usabilitydynamics/lib-utility/lib/class-loader.php',
