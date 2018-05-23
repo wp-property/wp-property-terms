@@ -28,7 +28,11 @@ jQuery(document).on('wpp.ui.settings.ready', function() {
   var wppTermsView = Backbone.View.extend({
     tagName: 'tr',
     className: 'wpp_dynamic_table_row',
-    template: _.template(jQuery('#settings-developer-terms-template').html()),
+    template: _.template(jQuery('#settings-developer-terms-template').html(), {
+      evaluate:    /{{([\s\S]+?)}}/g,
+      interpolate: /{{=([\s\S]+?)}}/g,
+      escape:      /{{-([\s\S]+?)}}/g
+    }),
     attributes: function(){
       return {
         slug: this.model.get('slug'),
