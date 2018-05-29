@@ -1,3 +1,6 @@
+### 1.1.1 ( May 29, 2018 )
+* Fixed compatibility issue with PHP 5.5.
+
 ### 1.1.0 ( April 19, 2018 )
 * Added new default taxonomy Property Location (wpp_location). It automatically takes terms from Address attribute. Can be enabled in composer.json
 * Added new default taxonomy Property Type. Can be enabled in composer.json
