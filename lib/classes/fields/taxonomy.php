@@ -58,6 +58,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 		 */
 		static function save( $new, $old, $post_id, $field ){
 			$term_ids = array();
+      $field_taxonomy = is_array($field['taxonomy']) ? $field['taxonomy'][0] : $field['taxonomy'];
 			if(empty( $new ) || count($new) == 0){
 				$new = null;
 			}
@@ -74,9 +75,9 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 						$p	= array('term_id'=>$id);
 					}
 					// Doing another check before insert.
-					else if($parent && !($p = term_exists($parent, $field['taxonomy']))){
+					else if($parent && !($p = term_exists($parent, $field_taxonomy))){
 						// Inserting new new term.
-						$p = wp_insert_term( $parent, $field['taxonomy']);
+						$p = wp_insert_term( $parent, $field_taxonomy);
 					}
 					else{
 						$p = array('term_id'=> 0);
@@ -87,9 +88,9 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 						$t		= array('term_id'=>$id);
 					}
 					// Doing another check before insert.
-					else if(!$t = term_exists($name, $field['taxonomy'])){
+					else if(!$t = term_exists($name, $field_taxonomy)){
 						// Inserting new new term.
-						$t 		= wp_insert_term( $name, $field['taxonomy'], array('parent'=>$p['term_id']));
+						$t 		= wp_insert_term( $name, $field_taxonomy, array('parent'=>$p['term_id']));
 					}
 
 					if(!is_wp_error($t))
@@ -98,7 +99,7 @@ if ( ! class_exists( 'RWMB_Wpp_Taxonomy_Field' ) ){
 			}
 
 			$term_ids = array_map( 'intval', $term_ids );
-			wp_set_object_terms( $post_id, $term_ids, $field['taxonomy'] );
+			wp_set_object_terms( $post_id, $term_ids, $field_taxonomy );
 		}
 	}
 }

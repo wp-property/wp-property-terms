@@ -28,25 +28,27 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
       $tax_counter = 0;
       $options = $field['options'];
       $field_name = trim($field['field_name'], '[]');
+      $field_taxonomy = is_array($field['taxonomy']) ? $field['taxonomy'][0] : $field['taxonomy'];
+      $field_size = (!empty($field['size'])) ? $field['size'] : '5';
       ob_start();
 
       ?>
       <div 
         class="rwmb-field rwmb-wpp-taxonomy-wrapper" 
         data-name="<?php echo $field_name;?>" 
-        data-taxonomy="<?php echo $field['taxonomy'];?>" 
+        data-taxonomy="<?php echo $field_taxonomy;?>"
         data-tax-counter="<?php echo $wpp_terms_taxonomy_field_counter;?>">
         <div class="taxsdiv">
           <div class="jaxtag">
             <div class="ui-widget clearfix">
-              <input type="text" class="wpp-terms-input wpp-terms-term" size="<?php $field['size'];?>" autocomplete="off" value="">
+              <input type="text" class="wpp-terms-input wpp-terms-term" size="<?php $field_size;?>" autocomplete="off" value="">
               <input type="button" id="terms-input-auto-<?php echo $wpp_terms_taxonomy_field_counter;?>" class="button taxadd" value="Add">
 
               <?php if($options['type'] == 'select_tree'):?>
               <div class="clearfix"></div>
               <a tabindex="-1" class="assign-parent button-link">Assign Parent</a>
               <div class="clearfix"></div>
-              <input type="text" class="wpp-terms-input wpp-terms-parent hidden" size="<?php $field['size'];?>" autocomplete="off" value="" placeholder="Parent">
+              <input type="text" class="wpp-terms-input wpp-terms-parent hidden" size="<?php $field_size;?>" autocomplete="off" value="" placeholder="Parent">
               <?php endif;?>
 
             </div>
@@ -56,7 +58,7 @@ if ( ! class_exists( 'RWMB_Wpp_Select_Advanced_Field' ) ){
             <?php
             if(is_array($meta))
               foreach ($meta as $term) {
-                $term = get_term( $term , $field['taxonomy'] );
+                $term = get_term( $term , $field_taxonomy );
                 $term_id = "tID_" . $term->term_id;
                 echo "<span class='tax-tag'>";
                   echo "<a class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term->name}";

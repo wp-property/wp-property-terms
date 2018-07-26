@@ -65,7 +65,7 @@
         "plugins": [{
           "name": "WP-Property",
           "slug": "wp-property",
-          "version": "2.2.1",
+          "version": "2.3.5",
           "required": true
         }]
       },
