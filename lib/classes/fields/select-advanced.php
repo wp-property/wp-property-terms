@@ -68,7 +68,7 @@ if (!class_exists('RWMB_Wpp_Select_Advanced_Field')) {
                 $get_term = get_term($term, $field_taxonomy);
                 $term_id = "tID_" . $get_term->term_id;
                 echo "<span class='tax-tag'>";
-                echo "<a class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$term->name}";
+                echo "<a class='ntdelbutton notice-dismiss' tabindex='0'>X</a>&nbsp;{$get_term->name}";
                 echo "<input type='hidden' name='{$field_name}[$tax_counter][term]' value='{$term_id}' />";
                 echo "</span>";
                 $tax_counter++;
